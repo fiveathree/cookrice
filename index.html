@@ -182,11 +182,25 @@ input[type=range]:disabled{opacity:.4}
 .st-heat{left:6px}.st-time{right:6px}
 .st-heat .lab,.st-time .lab{letter-spacing:.04em}
 .st-heat b,.st-time b{font-size:13px}
+.st-meth{position:absolute;right:6px;top:6px;z-index:1;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px;max-width:36%}
+.st-meth .chip{font-size:12px;padding:2px 8px;background:color-mix(in oklab,var(--panel) 90%,transparent)}
+.st-meth .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.wl{font-family:var(--f-num);font-size:9px;color:var(--c-starch);margin-left:1px}
+.upchip{border-style:dashed!important;color:var(--acc-ink)}
+.boost{display:flex;gap:8px;align-items:flex-start;border:1px dashed var(--line);border-radius:8px;padding:7px 9px;font-size:12px;color:var(--muted);cursor:pointer}
+.boost.on{border-color:var(--c-starch);background:color-mix(in oklab,var(--c-starch) 12%,var(--panel));color:var(--ink)}
+.boost input{margin-top:2px;accent-color:var(--c-starch)}
+.boost b{display:block;color:var(--ink);font-size:13px}
+.scene-tab.locked{opacity:.6}
+.scene-tab small{font-size:10px;color:var(--muted);font-family:var(--f-num)}
+.shop{display:grid;gap:6px}
+.shop-row{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--panel2)}
+.lvtag{font-size:11px;font-family:var(--f-num);color:var(--muted)}
 .st-pred{position:absolute;right:6px;top:6px;z-index:1;font-size:12px;background:color-mix(in oklab,var(--panel) 90%,transparent);border:1px solid var(--line);border-radius:999px;padding:2px 10px 2px 3px;display:flex;align-items:center;gap:6px;color:var(--muted)}
 .st-pred .g{width:20px;height:20px;border-radius:50%;border:2px solid var(--gc);color:var(--gc);display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:12px}
 .st-pred b{color:var(--ink)}
 .lower{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:end;margin-top:10px}
-@media (max-width:620px){.lower{grid-template-columns:1fr}.st-wares{max-width:72%}.st-heat,.st-time{width:47%}.stage-wrap.ctl{height:270px}.stage-art{top:62px;bottom:62px}.prow{padding:5px 2px 4px 4px;column-gap:2px}.prow .nm{display:none}.prow{grid-template-areas:"g x" "b b";grid-template-columns:auto 1fr}}
+@media (max-width:620px){.lower{grid-template-columns:1fr}.st-wares{max-width:62%}.st-meth{max-width:36%}.st-heat,.st-time{width:47%}.stage-wrap.ctl{height:270px}.stage-art{top:62px;bottom:62px}.prow{padding:5px 2px 4px 4px;column-gap:2px}.prow .nm{display:none}.prow{grid-template-areas:"g x" "b b";grid-template-columns:auto 1fr}}
 .lower .flavor{margin-top:0}
 .lower .tube{height:30px}
 .lower .predict{margin:0;padding:0;border:0;flex-wrap:nowrap}
@@ -492,22 +506,22 @@ const WARE={
   bowl:{n:'大碗',cap:0,fit:{raw:1}}
 };
 const HELP={
-  mum:{n:'阿媽',d:'幫你執味，調味扣分減半，不過一路嘮叨'},
-  bro:{n:'細佬',d:'試味好醒 +2，但有機會偷食一舊肉'},
-  auntie:{n:'隔籬王太',d:'跟足食譜有秘方加成 +6'},
-  roomie:{n:'室友阿B',d:'影相打卡名聲加倍，三成機會偷食'},
-  nerd:{n:'學霸同學',d:'計時好準，熟度容錯大啲'},
-  wokmaster:{n:'炒鑊師傅',d:'鑊氣加強，起火會變火焰秀'},
-  waiter:{n:'伙記',d:'出餐快手，售價 +25%'},
-  boss:{n:'老闆娘',d:'識做生意，售價 +10%，名聲多啲'},
-  barista:{n:'水吧師傅',d:'每碟配杯凍檸茶，+$15，評分 +2'},
-  sister:{n:'樓面阿姐',d:'催單有一手，出餐時間當快三成'},
-  sous:{n:'副廚',d:'幫手睇住啲扒，熟度容錯大啲'},
-  somm:{n:'侍酒師',d:'配酒售價 +40%，有酒入饌再 +3'},
-  chef:{n:'主廚 Antoine',d:'擺盤 +8，但煮得差會當眾鬧你'},
-  coach:{n:'求生教練',d:'識認毒菇，捕捉成功率高啲'},
-  hiker:{n:'行山友',d:'幫手睇火，營火唔會忽大忽細'},
-  dog:{n:'狗仔',d:'幫你搵食材，有時多捉一份'}
+  mum:{n:'阿媽',d:'幫你執味，調味扣分減半，不過一路嘮叨',bp:40,bd:'神之手：調味一定啱啱好'},
+  bro:{n:'細佬',d:'試味好醒 +2，但有機會偷食一舊肉',bp:20,bd:'收咗錢唔偷食，仲幫你睇火（熟度容錯 +30%）'},
+  auntie:{n:'隔籬王太',d:'跟足食譜有秘方加成 +6',bp:60,bd:'傳授家傳秘方：配搭滿分'},
+  roomie:{n:'室友阿B',d:'影相打卡名聲加倍，三成機會偷食',bp:30,bd:'唔偷食，打卡名聲變三倍'},
+  nerd:{n:'學霸同學',d:'計時好準，熟度容錯大啲',bp:40,bd:'用 stopwatch 計時：熟度容錯 +60%'},
+  wokmaster:{n:'炒鑊師傅',d:'鑊氣加強，起火會變火焰秀',bp:120,bd:'師傅親自上陣：鑊氣 +12'},
+  waiter:{n:'伙記',d:'出餐快手，售價 +25%',bp:60,bd:'推銷有道：售價 ×1.6'},
+  boss:{n:'老闆娘',d:'識做生意，售價 +10%，名聲多啲',bp:80,bd:'老闆娘幫你宣傳：出餐名聲 +5'},
+  barista:{n:'水吧師傅',d:'每碟配杯凍檸茶，+$15，評分 +2',bp:50,bd:'招牌鴛鴦配餐：+$40，評分 +4'},
+  sister:{n:'樓面阿姐',d:'催單有一手，出餐時間當快三成',bp:50,bd:'催單神技：出餐時間當快一半，永不嬲'},
+  sous:{n:'副廚',d:'幫手睇住啲扒，熟度容錯大啲',bp:150,bd:'副廚掌扒：熟度一定啱客人要求'},
+  somm:{n:'侍酒師',d:'配酒售價 +40%，有酒入饌再 +3',bp:200,bd:'開支好酒：售價 ×2'},
+  chef:{n:'主廚 Antoine',d:'擺盤 +8，但煮得差會當眾鬧你',bp:300,bd:'主廚親自擺盤 +15，唔會鬧你'},
+  coach:{n:'求生教練',d:'識認毒菇，捕捉成功率高啲',bp:60,bd:'教練帶路：捕捉成功率 +50%，毒菇一定認得'},
+  hiker:{n:'行山友',d:'幫手睇火，營火唔會忽大忽細',bp:40,bd:'睇實天氣：唔怕落雨，分享多補 +10 健康'},
+  dog:{n:'狗仔',d:'幫你搵食材，有時多捉一份',bp:20,bd:'狗仔超興奮：每次搵食材都多一份'}
 };
 const SC={
  home:{n:'普通屋企',tag:'兩頭煤氣爐，阿媽個鑊用咗廿年。',heat:7,
@@ -592,7 +606,13 @@ const SC={
       mid:['行山友：「肚餓就咩都好食。」','隊友：「有熱嘢食已經好好。」','隊友：「總好過能量棒。」'],
       bad:['行山友：「我諗我食返條能量棒算。」','連蚊都唔叮你。','隊友默默收拾背囊準備落山。']}}
 };
-const SKEYS=Object.keys(SC);
+const SKEYS=['home','dorm','cha','dpd','wild','steak','french'];
+const UNLOCK={home:[0,1],dorm:[0,1],cha:[10,2],dpd:[25,3],wild:[20,3],steak:[50,4],french:[80,5]};
+function unlocked(k){const u=UNLOCK[k];return S.fame>=u[0]&&level()>=u[1]}
+const WLV=[{n:'普通',t:0,b:0},{n:'靚料',t:.12,b:2},{n:'頂級',t:.25,b:4}];
+const WCOST={home:1,dorm:.8,cha:1.3,dpd:1.5,wild:1,steak:2.5,french:3};
+function wlv(w){return(S.wareLv&&S.wareLv[w])||1}
+function upCost(w){const l=wlv(w);if(l>=3)return 0;const base=Math.min(...SKEYS.filter(k=>SC[k].wares.includes(w)).map(k=>WCOST[k]));return Math.round((l===1?250:800)*base/10)*10}
 const SCOL={home:'#b8821b',dorm:'#1f968a',dpd:'#cf3a2f',cha:'#3a8a57',steak:'#9a3045',french:'#3554a4',wild:'#6d7f26'};
 
 const RECIPES=[
@@ -648,7 +668,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function newState(){
-  const s={day:1,meal:0,money:600,fame:0,exp:0,health:100,scene:'home',codex:{},stock:{},order:pick(ORDERS),pot:[],sel:{},src:{}};
+  const s={wareLv:{},opened:['home','dorm'],day:1,meal:0,money:600,fame:0,exp:0,health:100,scene:'home',codex:{},stock:{},order:pick(ORDERS),pot:[],sel:{},src:{}};
   return s;
 }
 function restock(){
@@ -674,7 +694,7 @@ function defaultSel(k){
   return {recipe:'',helper:'',method:m,ware:w,heat:Math.min(METH[m].h,cap),time:METH[m].t[2]};
 }
 function bestWare(k,m){let best=SC[k].wares[0],bf=-1;SC[k].wares.forEach(w=>{const f=WARE[w].fit[m]||0;if(f>bf){bf=f;best=w}});return best}
-function wareCap(k,w){return Math.min(SC[k].heat,WARE[w].cap)}
+function wareCap(k,w){const up=wlv(w)>=3&&WARE[w].cap?1:0;return Math.min(9,Math.min(SC[k].heat,WARE[w].cap)+up)}
 function methodOK(k,m){return SC[k].wares.some(w=>(WARE[w].fit[m]||0)>=.3)}
 
 /* ================= 計算 ================= */
@@ -685,6 +705,7 @@ function doneness(g,r,ctx,tolB){
     if(k===0)return{k:lab,q:.2,c:'raw',danger:!g.raw};
     if(k===6)return{k:lab,q:.4,c:'over'};
     if(k===7)return{k:lab,q:0,c:'burnt'};
+    if(ctx.order&&ctx.sousB)return{k:ctx.order,q:1,c:'ok'};
     if(ctx.order){const t=SL.indexOf(ctx.order);const df=Math.abs(k-t);
       const q=df===0?1:df===1?(ctx.sous?.9:.75):df===2?.5:.3;
       return{k:lab,q,c:df===0?'ok':df===1?'half':'over',miss:df>0};}
@@ -704,11 +725,12 @@ function evaluate(rand){
   const R=rand?Math.random:()=>1;
   const ev=[];const add=(t,k,tm)=>ev.push({t,k,tm});
   let items=S.pot.map((p,i)=>Object.assign({},p,{g:ING[p.id]}));
+  const BO=!!(se.boost&&hp),wl=wlv(wk);
   let bonus=0,healthHit=0,fameHit=0;
-  if(hp==='bro'&&R()<.25){const ix=items.findIndex(x=>x.g.c==='meat'||x.g.c==='sea');if(ix>=0){add(`細佬趁你轉身偷食咗一舊${items[ix].g.n}`,'bad');items.splice(ix,1);}}
+  if(hp==='bro'&&!BO&&R()<.25){const ix=items.findIndex(x=>x.g.c==='meat'||x.g.c==='sea');if(ix>=0){add(`細佬趁你轉身偷食咗一舊${items[ix].g.n}`,'bad');items.splice(ix,1);}}
   let heat=mk==='raw'?0:(w.fixed||se.heat);const T=mk==='raw'?0:se.time;let Teff=T;
   if(wk==='campfire'&&hp!=='hiker'&&rand){const d=Math.round(Math.random()*4-2);if(d){heat=clamp(heat+d,1,8);add(d>0?`營火突然旺咗，實際火候變 ${heat}`:`營火弱咗落嚟，實際火候變 ${heat}`,'info',T*.3);}}
-  if(sk==='wild'&&mk!=='raw'&&R()<.15){Teff=T*.65;add('落雨！火勢弱晒','bad',Teff);}
+  if(sk==='wild'&&mk!=='raw'&&!(BO&&hp==='hiker')&&R()<.15){Teff=T*.65;add('落雨！火勢弱晒','bad',Teff);}
   if(sk==='dorm'&&wk==='ihpan'&&heat>=6&&R()<.35){Teff=Math.min(Teff,T*(.4+Math.random()*.4));add('啪！跳掣，成層樓黑晒','bad',Teff);}
   let confiscated=false;
   if(sk==='dorm'&&(mk==='fry'||mk==='grill')&&R()<.5){confiscated=true;add('舍監聞到味衝入嚟，全部沒收！','bad',T*.5);fameHit-=5;}
@@ -726,14 +748,14 @@ function evaluate(rand){
   }
   let poison=false;
   if(items.some(i=>i.poison)){
-    if(hp==='coach'){add('教練一眼認出毒菇，幫你揀走咗','good',0);items=items.filter(i=>!i.poison);}
+    if(hp==='coach'&&(BO||R()<1.1)){add('教練一眼認出毒菇，幫你揀走咗','good',0);items=items.filter(i=>!i.poison);}
     else poison=true;
   }
   const lv=level();
-  const tolB=(hp==='nerd'||hp==='sous'?.25:0)+(hp==='wokmaster'?.1:0)+.02*(lv-1);
+  const tolB=(hp==='nerd'||hp==='sous'?.25:0)+(hp==='wokmaster'?.1:0)+.02*(lv-1)+WLV[wl-1].t+(BO&&hp==='bro'?.3:0)+(BO&&hp==='nerd'?.6:0);
   const rate=heat?Math.pow(heat/5,1.25)*m.mult:0;
   const n=items.length;
-  const ctx={raw:mk==='raw',liq:(!!m.liq&&hasLiq)||mk==='steam',order:sk==='steak'?S.order:null,sous:hp==='sous'};
+  const ctx={raw:mk==='raw',liq:(!!m.liq&&hasLiq)||mk==='steam',order:sk==='steak'?S.order:null,sous:hp==='sous',sousB:BO&&hp==='sous'};
   items.forEach((it,i)=>{
     it.ti=n>1?T*m.spread*i/(n-1):0;
     if(!it.g.ck&&!ctx.raw){it.d=null;return}
@@ -782,6 +804,7 @@ function evaluate(rand){
     if(D.u>=.8)notes.push('夠鮮');
     if(D.x>=.9)notes.push('好香');
     flS=clamp(f,0,1);
+    if(BO&&hp==='mum'){flS=1;notes.length=0;notes.push('阿媽執到啱啱好');}
   }
   // 配搭
   let comboS;
@@ -803,6 +826,7 @@ function evaluate(rand){
       if(miss.length)notes.push('未夠料煮「'+chosen.n+'」：欠'+miss.join('、'));
       else if(chosen.m!==mk)notes.push('「'+chosen.n+'」要用'+METH[chosen.m].n);}
   }
+  if(BO&&hp==='auntie')comboS=1;
   // 廚具
   const fit=w.fit[mk]||0;let toolS=fit;
   if(match){if(!match.w.includes(wk))toolS*=.9;if(mk!=='raw'&&Math.abs(heat-match.h)>2){toolS-=.15;notes.push('火候同食譜差好遠');}}
@@ -815,17 +839,19 @@ function evaluate(rand){
   // 加減分
   const firstSolid=items.find(i=>i.g.c!=='oil');
   if((mk==='stir'||mk==='pan')&&hasOil&&firstSolid&&firstSolid.g.c==='aro'){bonus+=3;add('先爆香，香氣四溢','good',firstSolid.ti);}
-  if(mk==='stir'&&wk==='wok'&&heat>=8&&n){const b=hp==='wokmaster'?8:5;bonus+=b;add('猛火快炒，鑊氣十足','good',T*.6);}
+  if(mk==='stir'&&wk==='wok'&&heat>=8&&n){const b=hp==='wokmaster'?(BO?12:8):5;bonus+=b;add('猛火快炒，鑊氣十足','good',T*.6);}
   if(lv>1)bonus+=Math.min(8,lv-1);
   if(hp==='bro')bonus+=2;
   if(hp==='auntie'&&match){bonus+=6;add('王太傳授秘方','good',T*.5);}
-  if(hp==='barista')bonus+=2;
-  if(hp==='chef'){bonus+=8;add('主廚親自擺盤','good',T);}
+  if(hp==='barista')bonus+=BO?4:2;
+  if(hp==='chef'){bonus+=BO?15:8;add('主廚親自擺盤','good',T);}
   if(hp==='somm'&&(ids.has('redwine')||ids.has('whitewine'))){bonus+=3;add('侍酒師揀咗支啱嘅酒入饌','good',T*.5);}
-  if(sk==='cha'&&mk!=='raw'&&n){const te=T*(hp==='sister'?.7:1);if(te<=m.t[2]){bonus+=4;add('快靚正，出餐神速','good',T);}else if(te>m.t[2]*2){bonus-=6;add('客人等到嬲','bad',T);}}
+  if(sk==='cha'&&mk!=='raw'&&n){const te=T*(hp==='sister'?(BO?.5:.7):1);if(te<=m.t[2]||(BO&&hp==='sister')){bonus+=4;add('快靚正，出餐神速','good',T);}else if(te>m.t[2]*2){bonus-=6;add('客人等到嬲','bad',T);}}
   if(sk==='french'&&hp!=='chef'&&n){bonus-=5;add('冇主廚睇住，擺盤求其','bad',T);}
   if(mk==='grill'&&wk==='campfire'&&n){bonus+=3;add('炭火香','good',T*.5);}
-  if(hp==='roomie'&&R()<.3){bonus-=6;add('阿B 趁你唔覺意食咗一大啖','bad',T);}
+  if(BO){bonus+=3;add(`${HELP[hp].n}神助攻：${HELP[hp].bd}`,'good',T*.2);}
+  if(wl>1){bonus+=WLV[wl-1].b;add(`${WLV[wl-1].n}${w.n}加持`,'good',0);}
+  if(hp==='roomie'&&!BO&&R()<.3){bonus-=6;add('阿B 趁你唔覺意食咗一大啖','bad',T);}
   const ow=m.ow;
   const W={done:30+7.5*(1-ow),order:15*ow,flavor:20+7.5*(1-ow),combo:15,tool:10,qual:10};
   let score=doneS*W.done+orderS*W.order+flS*W.flavor+comboS*W.combo+toolS*W.tool+qualS*W.qual+bonus;
@@ -839,11 +865,11 @@ function evaluate(rand){
   if(cooked.length&&burnt/cooked.length>.5)name='焦炭'+name;
   else if(cooked.length&&rawN/cooked.length>.5&&mk!=='raw')name='半生熟'+name;
   if(gr[1]==='E'&&match)name='失敗嘅'+match.n;
-  const cost=S.pot.reduce((a,p)=>a+p.price,0);
+  const cost=S.pot.reduce((a,p)=>a+p.price,0),boostCost=BO?HELP[hp].bp:0;
   const group=gr[1]==='S'||gr[1]==='A'?'good':gr[1]==='B'||gr[1]==='C'?'mid':'bad';
   let comment=pick(sc.cm[group]).replace('{d}',name);
   if(sk==='steak'&&steakMiss&&rand)comment=`客人：「我要${S.order}熟，呢塊唔係喎。」`;
-  return{score,grade:gr[1],gname:gr[2],gcol:gr[3],name,match,items,events:ev,notes,cost,danger,poison,confiscated,healthHit,fameHit,T,Teff,heat,
+  return{score,grade:gr[1],gname:gr[2],gcol:gr[3],name,match,items,events:ev,notes,cost,boostCost,boost:BO,helper:hp,danger,poison,confiscated,healthHit,fameHit,T,Teff,heat,
     comps:{done:doneS,order:orderS,flavor:flS,combo:comboS,tool:toolS,qual:qualS},W,D,bulk,comment,ware:w.n,method:m.n};
 }
 const SHORT={rice:'飯',noodle:'麵',hofun:'河',ricenoodle:'米粉',spaghetti:'意粉',macaroni:'通粉'};
@@ -1017,7 +1043,8 @@ function renderStats(){
   <div class="stat"><span class="k">健康</span><span class="v num">${S.health}</span><span class="bar hp${S.health<35?' low':''}"><i style="width:${S.health}%"></i></span></div>`;
 }
 function renderScenes(){
-  $('#scenes').innerHTML=SKEYS.map(k=>`<button class="scene-tab" data-act="scene" data-v="${k}" aria-pressed="${k===S.scene}" style="--sc:${SCOL[k]}"><span class="dot"></span>${SC[k].n}</button>`).join('');
+  $('#scenes').innerHTML=SKEYS.map(k=>{const ok=unlocked(k),u=UNLOCK[k];
+    return`<button class="scene-tab${ok?'':' locked'}" data-act="scene" data-v="${k}" aria-pressed="${k===S.scene}" ${ok?'':`aria-disabled="true" title="要名聲 ${u[0]}、廚藝 Lv${u[1]}"`} style="--sc:${SCOL[k]}"><span class="dot"></span>${SC[k].n}${ok?'':`<small>名聲${u[0]}·Lv${u[1]}</small>`}</button>`}).join('');
 }
 function renderBanner(){
   const sc=SC[S.scene];
@@ -1025,11 +1052,11 @@ function renderBanner(){
   if(S.scene==='steak')note=`今餐客人要：<b>${S.order}熟</b>。`+note;
   $('#banner').innerHTML=`<h1>${sc.n}</h1><div><p class="tag">${sc.tag}</p><p class="note">${note}</p></div>
   <details class="howto"><summary>點玩？</summary><ol>
-  <li>喺「灶台」揀食譜（或者自由發揮）、幫手、煮法、廚具、火候同時間。</li>
+  <li>喺「灶台」揀食譜（或者自由發揮）同幫手；俾錢可以叫幫手出神助攻。廚具喺動畫左上角，煮法喺右上角，火候同時間喺下面兩邊。</li>
   <li>喺「食材」撳嘢落鑊。落鑊次序好重要：越早落煮得越耐，油同香料通常要先落，調味靠後。</li>
   <li>每樣食材旁邊會即時顯示預計熟度，下面有味道分佈同預計分數（唔計意外）。</li>
   <li>撳「開煮」，睇下煮成點：可以自己食、${sc.serve}、影相打卡，或者倒咗佢。</li>
-  <li>錢唔夠就去打工。食生嘢或者毒菇會病，健康歸零要入院。</li></ol></details>`;
+  <li>錢可以買餸、升級廚具（動畫左上「升級」），同埋請幫手出神助攻。名聲同廚藝夠先開到新場景。錢唔夠就去打工。</li></ol></details>`;
 }
 function sec(id,label,body,extra){S.ui=S.ui||{};const open=S.ui[id]!==false;
   return`<details class="sec" data-sec="${id}" ${open?'open':''}><summary><span>${label}</span>${extra?`<small>${extra}</small>`:''}</summary><div class="sec-body">${body}</div></details>`}
@@ -1052,8 +1079,7 @@ function renderSetup(){
   const hchips=[''].concat(sc.helpers).map(k=>{const h=k?HELP[k]:{n:'自己搞掂',d:'唔使人幫'};return`<button class="helper" data-act="helper" data-v="${k}" aria-pressed="${se.helper===k}"><b>${h.n}</b><span>${h.d}</span></button>`}).join('');
   $('#setup').innerHTML=`<h2>灶台 <small>${sc.n}</small></h2>
   ${sec('recipe','食譜',`<select id="selRecipe" aria-label="食譜"><option value="">自由發揮</option>${recs.map(x=>`<option value="${x.id}" ${se.recipe===x.id?'selected':''}>${x.n}${S.codex[x.n]?'　'+S.codex[x.n].g:''}</option>`).join('')}</select>${rc}`,r?r.n:'自由發揮')}
-  ${sec('helper','幫手',`<div class="helpers">${hchips}</div>`,se.helper?HELP[se.helper].n:'自己搞掂')}
-  ${sec('method','煮法',`<div class="chips">${mchips}</div>`,METH[se.method].n)}`;
+  ${sec('helper','幫手',`<div class="helpers">${hchips}</div>${se.helper?`<label class="boost${se.boost?' on':''}"><input type="checkbox" id="boost" ${se.boost?'checked':''}><span><b>神助攻 $${HELP[se.helper].bp}／次</b>${HELP[se.helper].bd}</span></label>`:''}`,se.helper?HELP[se.helper].n+(se.boost?' · 神助攻':''):'自己搞掂')}`;
 }
 function renderPantry(){
   const sk=S.scene,sc=SC[sk];
@@ -1064,7 +1090,7 @@ function renderPantry(){
   else if(src.wild)list=Object.keys(src.chance).map(id=>({id,chance:src.chance[id]}));
   else list=src.items.map(id=>({id}));
   const html=list.map(o=>{const g=ING[o.id];let pr;
-    if(src.stock)pr=`剩 ${o.stock}`;else if(src.wild)pr=o.chance>=1?'免費':`成功率 ${Math.round(clamp(o.chance+(sel().helper==='coach'?.2:0),0,1)*100)}%`;
+    if(src.stock)pr=`剩 ${o.stock}`;else if(src.wild)pr=o.chance>=1?'免費':`成功率 ${Math.round(clamp(o.chance+(sel().helper==='coach'?(sel().boost?.5:.2):0),0,1)*100)}%`;
     else pr=g.p?'$'+Math.max(1,Math.round(g.p*src.mul)):'免費';
     return`<button class="item" data-act="add" data-v="${o.id}" ${src.stock&&!o.stock?'disabled':''}>${stamp(g)}<span class="t"><span class="nm">${g.n}</span><span class="pr">${pr}</span></span></button>`}).join('');
   $('#pantry').innerHTML=`<h2>食材 <small>撳一下落鑊</small></h2>
@@ -1077,8 +1103,9 @@ function renderCtl(){
   const sk=S.scene,sc=SC[sk],se=sel(),w=WARE[se.ware],cap=wareCap(sk,se.ware),m=METH[se.method],raw=se.method==='raw',fixed=w.fixed;
   const step=m.t[1]<=25?.5:m.t[1]<=60?1:5;
   const wchips=sc.wares.map(k=>{const f=WARE[k].fit[se.method]||0;const dots=f>=.95?'●●●':f>=.6?'●●':f>=.3?'●':'×';
-    return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}" title="適合${METH[se.method].n}：${dots}">${WARE[k].n}<span class="fit">${dots}</span></button>`}).join('');
-  $('#stageCtl').innerHTML=`<div class="st-wares" role="group" aria-label="廚具">${wchips}</div>
+    const l=wlv(k);return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}" title="${WLV[l-1].n}${WARE[k].n}，適合${METH[se.method].n}：${dots}">${WARE[k].n}${l>1?`<sup class="wl">${l}</sup>`:''}<span class="fit">${dots}</span></button>`}).join('')+`<button class="chip upchip" data-act="shop">升級</button>`;
+  const mchips=MKEYS.filter(k=>methodOK(sk,k)).map(k=>`<button class="chip" data-act="method" data-v="${k}" aria-pressed="${se.method===k}">${METH[k].n}</button>`).join('');
+  $('#stageCtl').innerHTML=`<div class="st-wares" role="group" aria-label="廚具">${wchips}</div><div class="st-meth" role="group" aria-label="煮法">${mchips}</div>
   <div class="st-heat"><label class="lab" for="heat">火候 <b id="heatV">${raw?'唔使開火':fixed?fixed+'（固定）':se.heat+' / '+cap}</b></label>
     <input type="range" id="heat" min="1" max="${Math.max(1,cap)}" step="1" value="${fixed||se.heat}" ${raw||fixed||!cap?'disabled':''}></div>
   <div class="st-time"><label class="lab" for="time">時間 <b id="timeV">${raw?'—':fmtT(se.time)}</b></label>
@@ -1087,12 +1114,11 @@ function renderCtl(){
 function renderPot(partial){
   const se=sel(),res=evaluate(false);PREV=res;
   if(!partial||!$('#stageCtl')){
-    $('#pot').innerHTML=`<div id="potHead"></div><div class="stage-wrap ctl"><div class="stage-art" id="stageArt"></div><div id="stageCtl"></div><div class="st-pred" id="stPred"></div></div><div id="potBody"></div>`;
+    $('#pot').innerHTML=`<div id="potHead"></div><div class="stage-wrap ctl"><div class="stage-art" id="stageArt"></div><div id="stageCtl"></div></div><div id="potBody"></div>`;
     renderCtl();
   }
   $('#potHead').innerHTML=`<h2>${WARE[se.ware].n} <small>${METH[se.method].n}${se.method!=='raw'?' · 火候 '+res.heat+' · '+fmtT(se.time):''}</small></h2>`;
   $('#stageArt').innerHTML=stageHTML({ware:se.ware,method:se.method,heat:res.heat,items:S.pot.map((p,i)=>Object.assign({},p,{d:res.items[i]&&res.items[i].d})),pfx:'p',bare:1});
-  $('#stPred').innerHTML=S.pot.length?`<span class="g" style="--gc:${res.gcol}">${res.grade}</span>預計 <b class="num">${res.score}</b> 分`:'<span class="g" style="--gc:var(--line)">·</span>未落料';
   const rows=S.pot.map((p,i)=>{const g=ING[p.id],it=res.items[i];const d=it&&it.d;
     const b=d?`<span class="badge b-${d.c}">${d.k}</span>`:`<span class="badge b-none">—</span>`;
     return`<li class="prow" data-i="${i}" title="${g.n}｜${p.srcn}${p.price?' $'+p.price:''}"><span class="grip" data-grip="${i}" tabindex="0" role="button" aria-label="第 ${i+1} 位 ${g.n}，拖動或者用箭咀鍵調次序">${stamp(g)}<i class="idx">${i+1}</i></span><span class="nm">${g.n}</span><button class="mini x" data-act="rm" data-v="${i}" aria-label="移除${g.n}">✕</button>${b}</li>`}).join('');
@@ -1103,8 +1129,8 @@ function renderPot(partial){
     return`<div class="fl"><div class="tube">${ideal}<i style="height:${h}%"></i></div>${FLN[k]}</div>`}).join('');
   const hints=res.notes.map(t=>`<li class="${/淡|鹹到|甜到|酸|噴火|油膩|撞|欠|要用|差|雜/.test(t)?'bad':/鮮|香|合拍/.test(t)?'good':''}">${esc(t)}</li>`)
     .concat(res.events.map(e=>`<li class="${e.k}">${esc(e.t)}</li>`)).join('');
-  const afford=S.money>=res.cost;
-  $('#potBody').innerHTML=`<div class="potmeta"><span>落鑊次序 <b>${S.pot.length}</b>/14${S.pot.length>1?' · 拖動調次序':''}</span><span>成本 <b class="num">$${res.cost}</b></span></div>
+  const afford=S.money>=res.cost+res.boostCost;
+  $('#potBody').innerHTML=`<div class="potmeta"><span>落鑊次序 <b>${S.pot.length}</b>/14${S.pot.length>1?' · 拖動調次序':''}</span><span>成本 <b class="num">$${res.cost}</b>${res.boostCost?` ＋ 神助攻 <b class="num">$${res.boostCost}</b>`:''}</span></div>
   ${S.pot.length?`<ol class="potlist">${rows}</ol>`:`<div class="empty">鑊仲係空嘅。喺食材度撳嘢落鑊，次序就係落鑊次序。</div>`}
   <div class="lower"><div class="flavor" aria-label="味道分佈">${tubes}</div>
   <div class="predict"><span class="p">預計（唔計意外）<br><b>${S.pot.length?res.grade+' '+res.gname+' · '+res.score+' 分':'—'}</b></span>
@@ -1129,11 +1155,11 @@ function addItem(id){
     if(c<1){
       if(S.health<=2){toast('冇力喇，休息下先');return}
       S.health-=2;
-      const p=clamp(c+(sel().helper==='coach'?.2:0),0,1);
+      const se0=sel(),cb=se0.helper==='coach'?(se0.boost?.5:.2):0;const p=clamp(c+cb,0,1);
       if(Math.random()>=p){toast({streamfish:'條魚游走咗',rabbit:'陷阱空空如也',wildmush:'搵唔到菇'}[id]||'搵唔到');save();renderStats();return}
       item.lim=1;
-      if(id==='wildmush'&&Math.random()<.3)item.poison=1;
-      if(sel().helper==='dog'&&Math.random()<.3&&S.pot.length<13){S.pot.push(Object.assign({},item));toast('狗仔幫你多搵咗一份'+g.n);}
+      if(id==='wildmush'&&Math.random()<.3&&!(se0.helper==='coach'&&se0.boost))item.poison=1;
+      if(se0.helper==='dog'&&Math.random()<(se0.boost?1:.3)&&S.pot.length<13){S.pot.push(Object.assign({},item));toast('狗仔幫你多搵咗一份'+g.n);}
     }
   }
   S.pot.push(item);save();renderSetup();renderPantry();renderPot();renderStats();
@@ -1147,7 +1173,7 @@ function clearPot(){for(let i=S.pot.length-1;i>=0;i--){const p=S.pot[i];if(p.lim
 function setMethod(k){const se=sel();se.method=k;if((WARE[se.ware].fit[k]||0)<.3)se.ware=bestWare(S.scene,k);const m=METH[k];se.time=m.t[2];se.heat=Math.min(m.h||1,wareCap(S.scene,se.ware))||1;}
 function follow(){const se=sel(),r=RBY[se.recipe];if(!r)return;se.method=r.m;const w=r.w.find(x=>SC[S.scene].wares.includes(x));se.ware=w||bestWare(S.scene,r.m);
   if(r.m!=='raw'){se.heat=Math.min(r.h,wareCap(S.scene,se.ware));se.time=r.t;}save();renderSetup();renderPot();}
-function switchScene(k){if(k===S.scene)return;clearPot();S.scene=k;save();renderAll();window.scrollTo({top:0,behavior:'smooth'})}
+function switchScene(k){if(k===S.scene)return;if(!unlocked(k)){const u=UNLOCK[k];toast(`${SC[k].n}未開放：要名聲 ${u[0]}（而家 ${S.fame}）同廚藝 Lv${u[1]}（而家 Lv${level()}）`);return}clearPot();S.scene=k;save();renderAll();window.scrollTo({top:0,behavior:'smooth'})}
 function newDay(){S.day++;S.meal=0;S.health=clamp(S.health+8,0,100);restock();S.order=pick(ORDERS);}
 function nextMeal(){S.meal++;if(S.meal>2)newDay();else S.order=pick(ORDERS);}
 function checkHealth(msgs){if(S.health<=0){const fee=Math.min(S.money,400);S.money-=fee;S.health=60;S.day+=3;restock();msgs.push(`你暈低咗，入院三日，醫藥費 $${fee}。`);}}
@@ -1161,8 +1187,9 @@ let animTimer=null;
 function cook(){
   if(!S.pot.length)return;
   const res=evaluate(true);
-  if(S.money<res.cost){toast('唔夠錢');return}
-  S.money-=res.cost;
+  const total=res.cost+res.boostCost;
+  if(S.money<total){toast('唔夠錢');return}
+  S.money-=total;
   CUR=res;CUR.photo=false;
   S.health=clamp(S.health-res.healthHit,0,100);S.fame+=res.fameHit;
   const sk=S.scene;S.pot=S.pot.filter(p=>!p.lim);
@@ -1225,15 +1252,16 @@ function showResult(res){
 function serveValue(res){
   const sk=S.scene,sc=SC[sk],gm={S:2,A:1.5,B:1.1,C:.8,D:.4,E:0}[res.grade];
   if(sk==='home')return'名聲 '+sgn({S:4,A:3,B:2,C:1,D:0,E:-2}[res.grade]);
-  if(sk==='wild')return'健康 '+sgn({S:12,A:9,B:6,C:3,D:0,E:-5}[res.grade]+(sel().helper==='hiker'?5:0));
+  if(sk==='wild')return'健康 '+sgn({S:12,A:9,B:6,C:3,D:0,E:-5}[res.grade]+(sel().helper==='hiker'?(res.boost?15:5):0));
   return'約 $'+salePrice(res);
 }
 function sgn(n){return(n>0?'+':'')+n}
 function salePrice(res){
   const sc=SC[S.scene],hp=sel().helper,gm={S:2,A:1.5,B:1.1,C:.8,D:.4,E:0}[res.grade];
   let base=res.match&&res.match.p?Math.max(res.match.p,res.cost*sc.sell):res.cost*sc.sell+10;
-  let p=base*gm*(hp==='waiter'?1.25:1)*(hp==='boss'?1.1:1)*(hp==='somm'?1.4:1);
-  if(hp==='barista'&&gm>0)p+=15;
+  const bo=res.boost;
+  let p=base*gm*(hp==='waiter'?(bo?1.6:1.25):1)*(hp==='boss'?1.1:1)*(hp==='somm'?(bo?2:1.4):1);
+  if(hp==='barista'&&gm>0)p+=bo?40:15;
   return Math.round(p);
 }
 function resolve(kind){
@@ -1241,7 +1269,7 @@ function resolve(kind){
   const msgs=[];const sk=S.scene,hp=sel().helper;
   if(kind==='photo'){
     if(res.photo)return;res.photo=true;
-    const f={S:5,A:3,B:1,C:0,D:1,E:4}[res.grade]*(hp==='roomie'?2:1);S.fame+=f;
+    const f={S:5,A:3,B:1,C:0,D:1,E:4}[res.grade]*(hp==='roomie'?(res.boost?3:2):1);S.fame+=f;
     const likes={S:'九百幾',A:'三百幾',B:'幾十',C:'兩三',D:'幾十個「哈哈」',E:'一千幾個「嬲嬲」，爆紅'}[res.grade];
     toast(`打卡收到 ${likes}${res.grade==='D'||res.grade==='E'?'':'個讚'}，名聲 ${sgn(f)}`);
     const b=$('#btnPhoto');if(b)b.disabled=true;save();renderStats();return;
@@ -1255,10 +1283,10 @@ function resolve(kind){
   }
   if(kind==='serve'){
     if(sk==='home'){const f={S:4,A:3,B:2,C:1,D:0,E:-2}[res.grade]+(hp==='auntie'?1:0);S.fame+=f;msgs.push(`屋企人食晒，名聲 ${sgn(f)}`);}
-    else if(sk==='wild'){const h={S:12,A:9,B:6,C:3,D:0,E:-5}[res.grade]+(hp==='hiker'?5:0);S.health=clamp(S.health+h,0,100);const f={S:3,A:2,B:1,C:0,D:0,E:-1}[res.grade];S.fame+=f;
+    else if(sk==='wild'){const h={S:12,A:9,B:6,C:3,D:0,E:-5}[res.grade]+(hp==='hiker'?(res.boost?15:5):0);S.health=clamp(S.health+h,0,100);const f={S:3,A:2,B:1,C:0,D:0,E:-1}[res.grade];S.fame+=f;
       if(res.poison){S.fame-=6;msgs.push('隊友食完中毒，要召直升機……名聲 −6');}else msgs.push(`同隊友分享，健康 ${sgn(h)}，名聲 ${sgn(f)}`);}
-    else{const p=salePrice(res);S.money+=p;let f={S:5,A:3,B:1,C:0,D:-2,E:-4}[res.grade]+(hp==='boss'?2:0);
-      if(hp==='chef'&&res.score<70){f-=3;msgs.push('主廚當眾鬧咗你十分鐘。');}
+    else{const p=salePrice(res);S.money+=p;let f={S:5,A:3,B:1,C:0,D:-2,E:-4}[res.grade]+(hp==='boss'?(res.boost?5:2):0);
+      if(hp==='chef'&&!res.boost&&res.score<70){f-=3;msgs.push('主廚當眾鬧咗你十分鐘。');}
       if(res.danger&&Math.random()<.4){f-=5;msgs.push('有客人食完肚痛，上網留咗負評。');}
       S.fame+=f;msgs.push(`收到 $${p}，名聲 ${sgn(f)}`);}
   }
@@ -1270,9 +1298,20 @@ function resolve(kind){
   }
   const L0=level();S.exp+=res.confiscated?2:Math.round(res.score/6)+(res.match?3:0);const L1=level();
   if(L1>L0)msgs.push(`廚藝升到 Lv${L1}！`);
+  SKEYS.forEach(k=>{if(unlocked(k)&&!(S.opened||[]).includes(k)){S.opened=(S.opened||[]).concat(k);if(UNLOCK[k][0]>0)msgs.push(`新場景開放：${SC[k].n}！`);}});
   nextMeal();checkHealth(msgs);
   CUR=null;save();closeSheet();renderAll();toast(msgs.join(' '));
 }
+function showShop(){
+  const sc=SC[S.scene];
+  const rows=sc.wares.map(w=>{const l=wlv(w),c=upCost(w),nx=WLV[l];
+    return`<div class="shop-row"><div><b>${WLV[l-1].n}${WARE[w].n}</b> <span class="lvtag">Lv${l}</span><div class="src-desc" style="margin:0">${l>1?`而家：熟度容錯 +${Math.round(WLV[l-1].t*100)}%、評分 +${WLV[l-1].b}${l>=3&&WARE[w].cap?'、火力上限 +1':''}`:'未升級'}</div>
+    ${nx?`<div class="src-desc" style="margin:0">升到${nx.n}：熟度容錯 +${Math.round(nx.t*100)}%、評分 +${nx.b}${l+1>=3&&WARE[w].cap?'、火力上限 +1':''}</div>`:''}</div>
+    ${nx?`<button class="btn pri" data-act="buy" data-v="${w}" ${S.money>=c?'':'disabled'}>$${c}</button>`:'<span class="lvtag">已經頂級</span>'}</div>`}).join('');
+  openSheet(`<h3>廚具升級</h3><p class="src-desc">錢包：<b class="num">$${Math.round(S.money).toLocaleString('en')}</b>。同一款廚具喺唔同場景共用等級。</p><div class="shop">${rows}</div>
+  <div class="res-acts"><button class="btn" data-act="close">關閉</button></div>`);
+}
+function buyUp(w){const c=upCost(w);if(!c||S.money<c){toast('唔夠錢');return}S.money-=c;S.wareLv[w]=wlv(w)+1;save();renderStats();renderPot();showShop();toast(`${WARE[w].n}升到${WLV[wlv(w)-1].n}！`);}
 function openSheet(html){$('#sheet').innerHTML=html;$('#ov').hidden=false;const b=$('#sheet .btn');if(b)b.focus({preventScroll:true});}
 function closeSheet(){$('#ov').hidden=true;$('#sheet').innerHTML='';}
 function showCodex(){
@@ -1294,6 +1333,7 @@ function reset(){
 
 function init(){
   S=load()||newState();
+  S.wareLv=S.wareLv||{};S.opened=S.opened||SKEYS.filter(k=>unlocked(k));if(!unlocked(S.scene))S.scene='home';
   if(!Object.keys(S.stock).length)restock();
   document.addEventListener('click',e=>{
     const b=e.target.closest('[data-act]');if(!b||b.disabled)return;
@@ -1303,9 +1343,11 @@ function init(){
       case'src':S.src[S.scene]=v;save();renderPantry();break;
       case'add':addItem(v);break;
       case'rm':removeItem(+v);break;
-      case'method':setMethod(v);save();renderSetup();renderPot();break;
+      case'method':setMethod(v);save();renderPot();break;
+      case'shop':showShop();break;
+      case'buy':buyUp(v);break;
       case'ware':se.ware=v;se.heat=Math.min(se.heat,wareCap(S.scene,v))||1;save();renderPot();break;
-      case'helper':se.helper=v;save();renderSetup();renderPantry();renderPot();break;
+      case'helper':if(se.helper!==v)se.boost=false;se.helper=v;save();renderSetup();renderPantry();renderPot();break;
       case'follow':follow();break;
       case'clear':clearPot();break;
       case'cook':cook();break;
@@ -1346,7 +1388,8 @@ function init(){
     [S.pot[i],S.pot[t]]=[S.pot[t],S.pot[i]];save();renderPot(true);const ng=document.querySelector(`[data-grip="${t}"]`);if(ng)ng.focus();
   });
   document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.sec){S.ui=S.ui||{};S.ui[d.dataset.sec]=d.open;save();const sm=d.querySelector('summary');}},true);
-  document.addEventListener('change',e=>{if(e.target.id==='selRecipe'){sel().recipe=e.target.value;save();renderSetup();renderPot();}});
+  document.addEventListener('change',e=>{if(e.target.id==='selRecipe'){sel().recipe=e.target.value;save();renderSetup();renderPot();}
+    if(e.target.id==='boost'){sel().boost=e.target.checked;save();renderSetup();renderPantry();renderPot();}});
   document.addEventListener('input',e=>{
     const se=sel();
     if(e.target.id==='heat'){se.heat=+e.target.value;$('#heatV').textContent=se.heat+' / '+wareCap(S.scene,se.ware);save();renderPot(true);}
