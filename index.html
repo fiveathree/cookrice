@@ -142,23 +142,57 @@ input[type=range]:disabled{opacity:.4}
 .legend i{width:9px;height:9px;border-radius:3px;background:var(--cc)}
 
 .potlist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
-.prow{display:grid;grid-template-columns:24px 18px 26px minmax(0,1fr) auto auto;position:relative;user-select:none;-webkit-user-select:none;align-items:center;gap:8px;padding:5px 6px;border-radius:8px;background:var(--panel2)}
-.prow .idx{font-family:var(--f-num);font-size:12px;color:var(--muted);text-align:right}
-.prow .nm{font-size:14px;line-height:1.25;min-width:0}
-.prow .nm small{display:block;font-size:11px;color:var(--muted)}
 .badge{font-size:11px;padding:1px 8px;border-radius:999px;color:#fff;background:var(--bc);white-space:nowrap}
 .b-raw{--bc:var(--d-raw)}.b-half{--bc:var(--d-half)}.b-ok{--bc:var(--d-ok)}.b-over{--bc:var(--d-over)}.b-burnt{--bc:var(--d-burnt)}.b-none{--bc:transparent;color:var(--muted)}
 .mv{display:flex;gap:1px}
-.grip{border:0;background:transparent;color:var(--muted);font-size:17px;line-height:1;padding:4px 2px;border-radius:5px;cursor:grab;touch-action:none}
-.grip:hover{background:var(--line);color:var(--ink)}
-@media (pointer:fine){.prow{cursor:grab}}
-.prow.dragging{z-index:3;box-shadow:0 8px 22px rgba(0,0,0,.22);background:var(--acc-soft);outline:1.5px solid var(--acc);cursor:grabbing}
-.sorting .prow:not(.dragging){transition:transform .15s}
 .stage-wrap{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;background:linear-gradient(var(--panel2),var(--panel));overflow:hidden}
-.stage svg{display:block;width:100%;height:auto;max-height:210px}
+.stage svg{display:block;width:100%;height:auto;max-height:190px}
+.potlist{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important}
+.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"g n x" "g b b";column-gap:5px;row-gap:2px;align-items:center;padding:5px 3px 4px 6px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);position:relative;user-select:none;-webkit-user-select:none;min-width:0}
+@media (pointer:fine){.prow{cursor:grab}}
+.prow .grip{grid-area:g;position:relative;touch-action:none;display:block;border-radius:6px;cursor:grab}
+.prow .grip .stamp{width:24px;height:24px;font-size:14px}
+.prow .idx{position:absolute;left:-6px;top:-6px;font-style:normal;font-family:var(--f-num);font-size:9px;background:var(--ink);color:var(--bg);border-radius:6px;padding:0 3px;line-height:13px}
+.prow .nm{grid-area:n;font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.prow .x{grid-area:x;padding:0 4px;font-size:11px;align-self:start}
+.prow .badge{grid-area:b;justify-self:start;font-size:10px;padding:0 6px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.prow.dragging{z-index:3;box-shadow:0 8px 22px rgba(0,0,0,.25);background:var(--acc-soft);border-color:var(--acc);cursor:grabbing}
+.prow.drop-target{outline:2px dashed var(--acc);outline-offset:1px}
+.sec{border-top:1px solid var(--line);padding-block:8px}
+.sec:first-of-type{border-top:0;padding-top:0}
+.sec summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;color:var(--muted);letter-spacing:.1em}
+.sec summary::-webkit-details-marker{display:none}
+.sec summary::before{content:"▸";margin-right:6px;transition:transform .15s;display:inline-block}
+.sec[open] summary::before{transform:rotate(90deg)}
+.sec summary span{flex:1}
+.sec summary small{color:var(--acc-ink);font-weight:700;letter-spacing:0;font-size:13px}
+.sec-body{display:grid;gap:8px;margin-top:8px}
+.helpers{grid-template-columns:1fr 1fr}
+.helper{padding:6px 8px}
+.helper span{font-size:11px}
+.stage-wrap.ctl{position:relative;height:clamp(160px,24vh,200px);margin-bottom:8px}
+.stage-art{position:absolute;inset:0;display:flex;justify-content:center}
+.stage-art .stage{height:100%}
+.stage-art .stage svg{height:100%;width:auto;max-width:100%;max-height:none}
+.st-wares{position:absolute;left:6px;top:6px;display:flex;flex-wrap:wrap;gap:3px;max-width:36%;z-index:1}
+.st-wares .chip{font-size:12px;padding:2px 7px;background:color-mix(in oklab,var(--panel) 90%,transparent)}
+.st-wares .chip[aria-pressed="true"]{background:var(--acc);color:var(--on-acc);border-color:var(--acc)}
+.st-wares .chip[aria-pressed="true"] .fit{color:var(--on-acc)}
+.st-heat,.st-time{position:absolute;bottom:6px;width:min(31%,180px);background:color-mix(in oklab,var(--panel) 90%,transparent);border:1px solid var(--line);border-radius:8px;padding:3px 8px 5px;z-index:1;display:grid;gap:2px}
+.st-heat{left:6px}.st-time{right:6px}
+.st-heat .lab,.st-time .lab{letter-spacing:.04em}
+.st-heat b,.st-time b{font-size:13px}
+.st-pred{position:absolute;right:6px;top:6px;z-index:1;font-size:12px;background:color-mix(in oklab,var(--panel) 90%,transparent);border:1px solid var(--line);border-radius:999px;padding:2px 10px 2px 3px;display:flex;align-items:center;gap:6px;color:var(--muted)}
+.st-pred .g{width:20px;height:20px;border-radius:50%;border:2px solid var(--gc);color:var(--gc);display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:12px}
+.st-pred b{color:var(--ink)}
+.lower{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 14px;align-items:end;margin-top:10px}
+@media (max-width:620px){.lower{grid-template-columns:1fr}.st-wares{max-width:72%}.st-heat,.st-time{width:47%}.stage-wrap.ctl{height:270px}.stage-art{top:62px;bottom:62px}.prow{padding:5px 2px 4px 4px;column-gap:2px}.prow .nm{display:none}.prow{grid-template-areas:"g x" "b b";grid-template-columns:auto 1fr}}
+.lower .flavor{margin-top:0}
+.lower .tube{height:30px}
+.lower .predict{margin:0;padding:0;border:0;flex-wrap:nowrap}
 .cooking .stage-wrap{margin-bottom:12px}
-.cooking .stage svg{max-height:260px}
-.res-stage .stage svg{max-height:150px}
+.cooking .stage svg{max-height:200px}
+.res-stage .stage svg{max-height:120px}
 .food .drop{transition:transform .38s cubic-bezier(.3,1.5,.6,1),opacity .2s}
 .food.pending .drop{opacity:0;transform:translateY(-70px)}
 .food .fi{transform-box:fill-box;transform-origin:center}
@@ -251,6 +285,25 @@ input[type=range]:disabled{opacity:.4}
 .cx b{font-family:var(--f-disp)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:9px;font-size:14px;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25)}
 footer{font-size:12px;padding-block:0 28px}
+@media (min-width:1121px) and (min-height:620px){
+  html,body{height:100%}
+  body{overflow:hidden}
+  .wrap{height:100%;display:flex;flex-direction:column}
+  header.top{padding-block:6px;gap:6px 18px}
+  .logo{font-size:26px}
+  nav.scenes{padding-block:6px 0}
+  .scene-tab{padding:4px 12px}
+  .banner{display:flex;flex-wrap:wrap;align-items:center;gap:2px 16px;padding:8px 14px;margin-top:6px}
+  .banner h1{font-size:30px}
+  .banner > div{flex:1;min-width:0}
+  .banner .note{margin:0}
+  .howto{grid-column:auto}
+  main.grid{flex:1;min-height:0;grid-template-rows:minmax(0,1fr);align-items:stretch;padding-block:10px 12px;gap:12px}
+  .panel{overflow:auto;min-height:0;padding:12px}
+  #pot{position:static}
+  footer{display:none}
+  .items{grid-template-columns:repeat(auto-fill,minmax(98px,1fr))}
+}
 footer span{background:var(--panel);color:var(--muted);padding:3px 10px;border-radius:6px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -941,7 +994,8 @@ function stageHTML(o){
   const lq=ids.find(x=>LIQC[x]);const lc=lq?LIQC[lq]:'';
   const oil=ids.some(x=>ING[x].c==='oil');
   const A=wareArt(wk,h,lc,oil);
-  return`<div class="stage-wrap"><div class="stage m-${o.method}${o.live?' live':''}" ${o.id?`id="${o.id}"`:''}><svg viewBox="0 0 320 200" role="img" aria-label="${WARE[wk].n}">${heatArt(src,h)}<g class="vessel">${A.b}<g class="foods">${foodsArt(o.items,A.a,o.pfx||'p',o.pending)}</g>${A.f}</g>${fxArt(o.method,A.a)}</svg></div></div>`;
+  const inner=`<div class="stage m-${o.method}${o.live?' live':''}" ${o.id?`id="${o.id}"`:''}><svg viewBox="0 22 320 178" role="img" aria-label="${WARE[wk].n}">${heatArt(src,h)}<g class="vessel">${A.b}<g class="foods">${foodsArt(o.items,A.a,o.pfx||'p',o.pending)}</g>${A.f}</g>${fxArt(o.method,A.a)}</svg></div>`;
+  return o.bare?inner:`<div class="stage-wrap">${inner}</div>`;
 }
 
 /* ================= 介面 ================= */
@@ -977,8 +1031,10 @@ function renderBanner(){
   <li>撳「開煮」，睇下煮成點：可以自己食、${sc.serve}、影相打卡，或者倒咗佢。</li>
   <li>錢唔夠就去打工。食生嘢或者毒菇會病，健康歸零要入院。</li></ol></details>`;
 }
+function sec(id,label,body,extra){S.ui=S.ui||{};const open=S.ui[id]!==false;
+  return`<details class="sec" data-sec="${id}" ${open?'open':''}><summary><span>${label}</span>${extra?`<small>${extra}</small>`:''}</summary><div class="sec-body">${body}</div></details>`}
 function renderSetup(){
-  const sk=S.scene,sc=SC[sk],se=sel(),cap=wareCap(sk,se.ware),w=WARE[se.ware];
+  const sk=S.scene,sc=SC[sk],se=sel();
   const recs=RECIPES.filter(r=>r.s===sk);
   const r=RBY[se.recipe];
   const ids=new Set(S.pot.map(p=>p.id));
@@ -993,24 +1049,12 @@ function renderSetup(){
     <button class="btn" data-act="follow">跟食譜設定</button></div>`;
   }
   const mchips=MKEYS.map(k=>`<button class="chip" data-act="method" data-v="${k}" aria-pressed="${se.method===k}" ${methodOK(sk,k)?'':'disabled'}>${METH[k].n}</button>`).join('');
-  const wchips=sc.wares.map(k=>{const f=WARE[k].fit[se.method]||0;const dots=f>=.95?'●●●':f>=.6?'●●':f>=.3?'●':'×';
-    return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}">${WARE[k].n}<span class="fit" title="適合程度">${dots}</span></button>`}).join('');
   const hchips=[''].concat(sc.helpers).map(k=>{const h=k?HELP[k]:{n:'自己搞掂',d:'唔使人幫'};return`<button class="helper" data-act="helper" data-v="${k}" aria-pressed="${se.helper===k}"><b>${h.n}</b><span>${h.d}</span></button>`}).join('');
-  const m=METH[se.method],raw=se.method==='raw',fixed=w.fixed;
-  const step=m.t[1]<=25?.5:m.t[1]<=60?1:5;
-  $('#setup').innerHTML=`<h2>灶台 <small>${sc.n}</small></h2><div class="fields">
-  <div class="field"><label class="lab" for="selRecipe">食譜</label><select id="selRecipe"><option value="">自由發揮</option>${recs.map(x=>`<option value="${x.id}" ${se.recipe===x.id?'selected':''}>${x.n}${S.codex[x.n]?'　'+S.codex[x.n].g:''}</option>`).join('')}</select>${rc}</div>
-  <div class="field"><span class="lab">幫手</span><div class="helpers">${hchips}</div></div>
-  <div class="field"><span class="lab">煮法</span><div class="chips">${mchips}</div></div>
-  <div class="field"><span class="lab">廚具 <span>● 適合程度</span></span><div class="chips">${wchips}</div></div>
-  <div class="field"><label class="lab" for="heat">火候 <b id="heatV">${raw?'唔使開火':fixed?fixed+'（固定）':se.heat+' / '+cap}</b></label>
-    <input type="range" id="heat" min="1" max="${Math.max(1,cap)}" step="1" value="${fixed||se.heat}" ${raw||fixed?'disabled':''}>
-    <div class="flames" id="flames">${flames(raw?0:(fixed||se.heat))}</div></div>
-  <div class="field"><label class="lab" for="time">時間 <b id="timeV">${raw?'—':fmtT(se.time)}</b></label>
-    <input type="range" id="time" min="${m.t[0]}" max="${m.t[1]||1}" step="${step}" value="${se.time}" ${raw?'disabled':''}></div>
-  </div>`;
+  $('#setup').innerHTML=`<h2>灶台 <small>${sc.n}</small></h2>
+  ${sec('recipe','食譜',`<select id="selRecipe" aria-label="食譜"><option value="">自由發揮</option>${recs.map(x=>`<option value="${x.id}" ${se.recipe===x.id?'selected':''}>${x.n}${S.codex[x.n]?'　'+S.codex[x.n].g:''}</option>`).join('')}</select>${rc}`,r?r.n:'自由發揮')}
+  ${sec('helper','幫手',`<div class="helpers">${hchips}</div>`,se.helper?HELP[se.helper].n:'自己搞掂')}
+  ${sec('method','煮法',`<div class="chips">${mchips}</div>`,METH[se.method].n)}`;
 }
-function flames(h){let s='';for(let i=1;i<=9;i++)s+=`<i class="${i<=h?'on':''}" style="height:${20+i*9}%"></i>`;return s}
 function renderPantry(){
   const sk=S.scene,sc=SC[sk];
   let sid=S.src[sk];if(!sc.src.find(s=>s.id===sid))sid=S.src[sk]=sc.src[0].id;
@@ -1029,12 +1073,29 @@ function renderPantry(){
   <div class="items">${html||'<div class="empty">今日冇貨喇</div>'}</div>
   <div class="legend">${Object.keys(CATN).map(c=>`<span><i class="c-${c}"></i>${CATN[c]}</span>`).join('')}</div>`;
 }
-function renderPot(){
+function renderCtl(){
+  const sk=S.scene,sc=SC[sk],se=sel(),w=WARE[se.ware],cap=wareCap(sk,se.ware),m=METH[se.method],raw=se.method==='raw',fixed=w.fixed;
+  const step=m.t[1]<=25?.5:m.t[1]<=60?1:5;
+  const wchips=sc.wares.map(k=>{const f=WARE[k].fit[se.method]||0;const dots=f>=.95?'●●●':f>=.6?'●●':f>=.3?'●':'×';
+    return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}" title="適合${METH[se.method].n}：${dots}">${WARE[k].n}<span class="fit">${dots}</span></button>`}).join('');
+  $('#stageCtl').innerHTML=`<div class="st-wares" role="group" aria-label="廚具">${wchips}</div>
+  <div class="st-heat"><label class="lab" for="heat">火候 <b id="heatV">${raw?'唔使開火':fixed?fixed+'（固定）':se.heat+' / '+cap}</b></label>
+    <input type="range" id="heat" min="1" max="${Math.max(1,cap)}" step="1" value="${fixed||se.heat}" ${raw||fixed||!cap?'disabled':''}></div>
+  <div class="st-time"><label class="lab" for="time">時間 <b id="timeV">${raw?'—':fmtT(se.time)}</b></label>
+    <input type="range" id="time" min="${m.t[0]}" max="${m.t[1]||1}" step="${step}" value="${se.time}" ${raw?'disabled':''}></div>`;
+}
+function renderPot(partial){
   const se=sel(),res=evaluate(false);PREV=res;
+  if(!partial||!$('#stageCtl')){
+    $('#pot').innerHTML=`<div id="potHead"></div><div class="stage-wrap ctl"><div class="stage-art" id="stageArt"></div><div id="stageCtl"></div><div class="st-pred" id="stPred"></div></div><div id="potBody"></div>`;
+    renderCtl();
+  }
+  $('#potHead').innerHTML=`<h2>${WARE[se.ware].n} <small>${METH[se.method].n}${se.method!=='raw'?' · 火候 '+res.heat+' · '+fmtT(se.time):''}</small></h2>`;
+  $('#stageArt').innerHTML=stageHTML({ware:se.ware,method:se.method,heat:res.heat,items:S.pot.map((p,i)=>Object.assign({},p,{d:res.items[i]&&res.items[i].d})),pfx:'p',bare:1});
+  $('#stPred').innerHTML=S.pot.length?`<span class="g" style="--gc:${res.gcol}">${res.grade}</span>預計 <b class="num">${res.score}</b> 分`:'<span class="g" style="--gc:var(--line)">·</span>未落料';
   const rows=S.pot.map((p,i)=>{const g=ING[p.id],it=res.items[i];const d=it&&it.d;
     const b=d?`<span class="badge b-${d.c}">${d.k}</span>`:`<span class="badge b-none">—</span>`;
-    return`<li class="prow" data-i="${i}"><button class="grip" data-grip="${i}" aria-label="第 ${i+1} 位 ${g.n}，拖動或者用上下箭咀調次序">⠿</button><span class="idx">${i+1}</span>${stamp(g)}<span class="nm">${g.n}<small>${p.srcn}${p.price?' · $'+p.price:''}</small></span>${b}
-    <span class="mv"><button class="mini" data-act="rm" data-v="${i}" aria-label="移除">✕</button></span></li>`}).join('');
+    return`<li class="prow" data-i="${i}" title="${g.n}｜${p.srcn}${p.price?' $'+p.price:''}"><span class="grip" data-grip="${i}" tabindex="0" role="button" aria-label="第 ${i+1} 位 ${g.n}，拖動或者用箭咀鍵調次序">${stamp(g)}<i class="idx">${i+1}</i></span><span class="nm">${g.n}</span><button class="mini x" data-act="rm" data-v="${i}" aria-label="移除${g.n}">✕</button>${b}</li>`}).join('');
   const D=res.D,sweet=res.match&&res.match.sweet;
   const tubes=FLK.map(k=>{const v=res.bulk?D[k]:0;const h=clamp(v/2.4*100,0,100);
     let ideal='';if(k==='s'&&!sweet)ideal=`<span class="ideal" style="bottom:${.35/2.4*100}%;height:${(1.5-.35)/2.4*100}%"></span>`;
@@ -1043,15 +1104,13 @@ function renderPot(){
   const hints=res.notes.map(t=>`<li class="${/淡|鹹到|甜到|酸|噴火|油膩|撞|欠|要用|差|雜/.test(t)?'bad':/鮮|香|合拍/.test(t)?'good':''}">${esc(t)}</li>`)
     .concat(res.events.map(e=>`<li class="${e.k}">${esc(e.t)}</li>`)).join('');
   const afford=S.money>=res.cost;
-  $('#pot').innerHTML=`<h2>${WARE[se.ware].n} <small>${METH[se.method].n}${se.method!=='raw'?' · 火候 '+res.heat+' · '+fmtT(se.time):''}</small></h2>
-  ${stageHTML({ware:se.ware,method:se.method,heat:res.heat,items:S.pot.map((p,i)=>Object.assign({},p,{d:res.items[i]&&res.items[i].d})),pfx:'p'})}
-  <div class="potmeta"><span>落鑊次序 <b>${S.pot.length}</b>/14${S.pot.length>1?' · 按住 ⠿ 拖動調次序':''}</span><span>食材成本 <b class="num">$${res.cost}</b></span></div>
-  ${S.pot.length?`<ol class="potlist">${rows}</ol>`:`<div class="empty">鑊仲係空嘅。<br>喺食材度撳嘢落鑊，次序就係落鑊次序。</div>`}
-  <div class="flavor" aria-label="味道分佈">${tubes}</div>
-  ${hints?`<ul class="hints">${hints}</ul>`:''}
+  $('#potBody').innerHTML=`<div class="potmeta"><span>落鑊次序 <b>${S.pot.length}</b>/14${S.pot.length>1?' · 拖動調次序':''}</span><span>成本 <b class="num">$${res.cost}</b></span></div>
+  ${S.pot.length?`<ol class="potlist">${rows}</ol>`:`<div class="empty">鑊仲係空嘅。喺食材度撳嘢落鑊，次序就係落鑊次序。</div>`}
+  <div class="lower"><div class="flavor" aria-label="味道分佈">${tubes}</div>
   <div class="predict"><span class="p">預計（唔計意外）<br><b>${S.pot.length?res.grade+' '+res.gname+' · '+res.score+' 分':'—'}</b></span>
   <span style="display:flex;gap:6px"><button class="btn" data-act="clear" ${S.pot.length?'':'disabled'}>清空</button>
-  <button class="btn pri cookbtn" data-act="cook" ${S.pot.length&&afford?'':'disabled'}>開煮</button></span></div>
+  <button class="btn pri cookbtn" data-act="cook" ${S.pot.length&&afford?'':'disabled'}>開煮</button></span></div></div>
+  ${hints?`<ul class="hints">${hints}</ul>`:''}
   ${!afford?`<p class="src-desc" style="margin:8px 0 0;color:var(--c-meat)">唔夠錢買食材，去打工先啦。</p>`:''}`;
 }
 function renderAll(){
@@ -1245,7 +1304,7 @@ function init(){
       case'add':addItem(v);break;
       case'rm':removeItem(+v);break;
       case'method':setMethod(v);save();renderSetup();renderPot();break;
-      case'ware':se.ware=v;se.heat=Math.min(se.heat,wareCap(S.scene,v))||1;save();renderSetup();renderPot();break;
+      case'ware':se.ware=v;se.heat=Math.min(se.heat,wareCap(S.scene,v))||1;save();renderPot();break;
       case'helper':se.helper=v;save();renderSetup();renderPantry();renderPot();break;
       case'follow':follow();break;
       case'clear':clearPot();break;
@@ -1263,32 +1322,35 @@ function init(){
     const row=e.target.closest('.prow');if(!row||e.button>0||e.target.closest('[data-act]'))return;
     if(e.pointerType!=='mouse'&&!e.target.closest('.grip'))return;
     const list=row.parentElement,rows=[...list.children],i=rows.indexOf(row);
-    const h=rows.length>1?rows[1].getBoundingClientRect().top-rows[0].getBoundingClientRect().top:row.offsetHeight+4;
-    drag={row,rows,list,i,h,y0:e.clientY,t:i,id:e.pointerId};
+    drag={row,rows,rects:rows.map(r=>r.getBoundingClientRect()),i,x0:e.clientX,y0:e.clientY,t:i,id:e.pointerId,moved:false};
     try{row.setPointerCapture(e.pointerId)}catch(_){}
-    row.classList.add('dragging');list.classList.add('sorting');e.preventDefault();
+    e.preventDefault();
   });
   document.addEventListener('pointermove',e=>{
     if(!drag||e.pointerId!==drag.id)return;
-    const n=drag.rows.length,lo=-drag.i*drag.h,hi=(n-1-drag.i)*drag.h,dy=clamp(e.clientY-drag.y0,lo-10,hi+10);
-    drag.row.style.transform=`translateY(${dy}px)`;
-    const t=clamp(drag.i+Math.round(dy/drag.h),0,n-1);drag.t=t;
-    drag.rows.forEach((r,j)=>{if(j===drag.i)return;let sh=0;if(drag.i<j&&j<=t)sh=-drag.h;else if(t<=j&&j<drag.i)sh=drag.h;r.style.transform=sh?`translateY(${sh}px)`:'';});
+    const dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
+    if(!drag.moved){if(Math.hypot(dx,dy)<4)return;drag.moved=true;drag.row.classList.add('dragging');}
+    drag.row.style.transform=`translate(${dx}px,${dy}px)`;
+    const px=e.clientX,py=e.clientY;
+    let t=drag.rects.findIndex(r=>px>=r.left&&px<=r.right&&py>=r.top&&py<=r.bottom);
+    if(t<0){let best=1e9;drag.rects.forEach((r,j)=>{const d=Math.hypot(px-(r.left+r.width/2),py-(r.top+r.height/2));if(d<best){best=d;t=j}});}
+    drag.t=t;drag.rows.forEach((r,j)=>r.classList.toggle('drop-target',j===t&&j!==drag.i));
   });
-  const endDrag=e=>{if(!drag||e.pointerId!==drag.id)return;const{i,t}=drag;drag=null;
-    if(t!==i){const[it]=S.pot.splice(i,1);S.pot.splice(t,0,it);save();}renderPot();};
+  const endDrag=e=>{if(!drag||e.pointerId!==drag.id)return;const{i,t,moved}=drag;drag=null;
+    if(moved&&t!==i){const[it]=S.pot.splice(i,1);S.pot.splice(t,0,it);save();}renderPot(true);};
   document.addEventListener('pointerup',endDrag);document.addEventListener('pointercancel',endDrag);
   document.addEventListener('keydown',e=>{
     const g=e.target.closest&&e.target.closest('.grip');if(!g)return;
-    const i=+g.dataset.grip,t=e.key==='ArrowUp'?i-1:e.key==='ArrowDown'?i+1:-1;
-    if(t<0||t>=S.pot.length)return;e.preventDefault();
-    [S.pot[i],S.pot[t]]=[S.pot[t],S.pot[i]];save();renderPot();const ng=document.querySelector(`[data-grip="${t}"]`);if(ng)ng.focus();
+    const i=+g.dataset.grip,d={ArrowUp:-1,ArrowLeft:-1,ArrowDown:1,ArrowRight:1}[e.key];if(!d)return;
+    const t=i+d;if(t<0||t>=S.pot.length)return;e.preventDefault();
+    [S.pot[i],S.pot[t]]=[S.pot[t],S.pot[i]];save();renderPot(true);const ng=document.querySelector(`[data-grip="${t}"]`);if(ng)ng.focus();
   });
+  document.addEventListener('toggle',e=>{const d=e.target;if(d&&d.dataset&&d.dataset.sec){S.ui=S.ui||{};S.ui[d.dataset.sec]=d.open;save();const sm=d.querySelector('summary');}},true);
   document.addEventListener('change',e=>{if(e.target.id==='selRecipe'){sel().recipe=e.target.value;save();renderSetup();renderPot();}});
   document.addEventListener('input',e=>{
     const se=sel();
-    if(e.target.id==='heat'){se.heat=+e.target.value;$('#heatV').textContent=se.heat+' / '+wareCap(S.scene,se.ware);$('#flames').innerHTML=flames(se.heat);save();renderPot();}
-    if(e.target.id==='time'){se.time=+e.target.value;$('#timeV').textContent=fmtT(se.time);save();renderPot();}
+    if(e.target.id==='heat'){se.heat=+e.target.value;$('#heatV').textContent=se.heat+' / '+wareCap(S.scene,se.ware);save();renderPot(true);}
+    if(e.target.id==='time'){se.time=+e.target.value;$('#timeV').textContent=fmtT(se.time);save();renderPot(true);}
   });
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#ov').hidden&&!CUR)closeSheet();});
   $('#ov').addEventListener('click',e=>{if(e.target.id==='ov'&&!CUR)closeSheet();});
