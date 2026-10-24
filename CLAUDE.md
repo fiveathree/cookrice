@@ -3,7 +3,7 @@
 俾之後喺 Claude Code 繼續開發嘅 AI 同人睇。玩法簡介喺 `README.md`，呢份講**點寫、點改、改完點驗**。
 
 ## 一句講晒
-單一檔案網頁遊戲：`index.html`（HTML + CSS + JS 全部 inline，約 130KB，冇 build、冇框架、冇外部 JS 庫）。用 GitHub Pages 或者任何靜態 hosting 直接開。進度存 `localStorage`，key 係 `cookrice.v1`。
+單一檔案網頁遊戲：`index.html`（HTML + CSS + JS 全部 inline，約 130KB，冇 build、冇框架、冇外部 JS 庫）。已經開咗 GitHub Pages：<https://fiveathree.github.io/cookrice/>，push 去 `main` 一兩分鐘後自動更新。進度存 `localStorage`，key 係 `cookrice.v1`。
 
 概念參考同一個 GitHub 帳號下嘅 `fiveathree/dan`（九轉丹房，煉丹模擬器）：揀設定 → 按次序落料 → 出結果 → 處理結果。
 
@@ -42,6 +42,7 @@
 2. **狀態**：`newState()`、`restock()`（雪櫃、背囊等限量來源每日補貨）、`save()` / `load()`、`level()`、`sel()`（目前場景嘅設定）、`wareCap()`。
 3. **計算**：`doneness()` 同 `evaluate(rand)`，係核心，詳見下面。另有 `nameDish()` 幫自創料理改名。
 4. **場景背景**：`BG[scene]` 係一疊 CSS background layers（SVG data URI 加 gradient），由 `applyBG()` 貼去 `#scenebg`。
+   - 位置寫 `top 96px` 呢類嘅掛飾，只喺電腦一版睇晒版面先畫（`narrowMQ`），唔係會壓住手機嘅場景掣。
 5. **廚具畫面**
    - `HSRC` 指定每款廚具用乜火源：煤氣、電磁爐、炭、營火、自己發熱，或者冇火嘅枱。
    - `heatArt()` 畫火源，`wareArt()` 回傳 `{b:後層, a:食材擺放範圍, f:前層}`。
@@ -152,7 +153,6 @@
 - **新幫手**：喺 `HELP` 加，記得有 `bp` 同 `bd`。效果喺 `evaluate()`、`salePrice()` 或者 `resolve()` 用 `hp===…` 同 `BO` 判斷。
 
 ## 可以考慮嘅下一步（未做）
-- 未開 GitHub Pages：要喺 repo **Settings → Pages → Deploy from a branch → main / (root)** 開。
 - 而家廚具等級用咗真品牌名（孖人牌、Le Creuset、Mauviel 1830）。如果之後要收費或者商業化，有機會惹商標問題，要換返自創名。
 - 未有音效，未有成就系統。圖鑑淨係記錄最佳評級。
 - 平衡數字（價錢、解鎖門檻、神助攻價）未經真人長時間試玩。

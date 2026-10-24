@@ -3,7 +3,7 @@
 globalThis.NODE_TEST = true;
 const fs = require('fs'), path = require('path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-const js = html.match(/<script>\n([\s\S]*)<\/script>/)[1];
+const js = html.match(/<script>\r?\n([\s\S]*)<\/script>/)[1];
 eval(js + ';globalThis.E={RECIPES,SC,ING,evaluate,newState,restock,wareCap,set:s=>S=s,get S(){return S}};');
 const { RECIPES, SC, ING, evaluate, newState, restock, wareCap } = E;
 E.set(newState()); restock(); const S = E.S;
