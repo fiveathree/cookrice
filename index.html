@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>煮飯仔</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="煮飯仔：揀場景、食材、幫手、煮法同廚具，按次序落鑊，睇下煮成點。">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1d2321">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+HK:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: 灶台 (settings) | 鑊 (ordered pot, sticky) | 食材櫃 (sources) — stacks on phones. Each scene re-tints the page through --acc. */
+:root{
+  --bg:#eef1f0; --panel:#ffffff; --panel2:#f5f7f6; --ink:#1d2321; --muted:#5b6764; --line:#d2dad7; --mix:#000;
+  --flame:#e8622a; --on-acc:#ffffff; --shade:rgba(15,20,18,.5);
+  --c-meat:#bf453b; --c-sea:#2c74b0; --c-veg:#3b8945; --c-starch:#ad8028; --c-egg:#c09311; --c-aro:#8752ad; --c-sau:#83573a; --c-liq:#22909b; --c-oil:#b48c18;
+  --d-raw:#3b6dcf; --d-half:#28938f; --d-ok:#2e9449; --d-over:#cc7d24; --d-burnt:#4e3426;
+  --acc:#b8821b;
+  --f-disp:"LXGW WenKai TC","Noto Serif TC","PMingLiU",serif;
+  --f-body:"Noto Sans HK","PingFang HK","Microsoft JhengHei",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111614; --panel:#1a201e; --panel2:#212826; --ink:#e7edeb; --muted:#93a19d; --line:#2e3835; --mix:#fff; --shade:rgba(0,0,0,.62); color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111614; --panel:#1a201e; --panel2:#212826; --ink:#e7edeb; --muted:#93a19d; --line:#2e3835; --mix:#fff; --shade:rgba(0,0,0,.62); color-scheme:dark}
+
+body[data-scene="home"]{--acc:#b8821b}
+body[data-scene="dorm"]{--acc:#1f968a}
+body[data-scene="dpd"]{--acc:#cf3a2f}
+body[data-scene="cha"]{--acc:#3a8a57}
+body[data-scene="steak"]{--acc:#9a3045}
+body[data-scene="french"]{--acc:#3554a4}
+body[data-scene="wild"]{--acc:#6d7f26}
+body{
+  --acc-ink:color-mix(in oklab,var(--acc) 76%,var(--mix));
+  --acc-soft:color-mix(in oklab,var(--acc) 13%,var(--panel));
+  --scene-bg:color-mix(in oklab,var(--acc) 6%,var(--bg));
+  margin:0; background:var(--scene-bg); color:var(--ink);
+  font-family:var(--f-body); font-size:15px; line-height:1.55; transition:background-color .4s;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+.wrap{max-width:1380px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc-ink);outline-offset:2px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+header.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding-block:14px 10px}
+.brand{display:flex;align-items:baseline;gap:10px}
+.logo{font-family:var(--f-disp);font-weight:700;font-size:32px;letter-spacing:.06em;line-height:1}
+.logo b{color:var(--acc-ink)}
+.brand small{color:var(--muted);font-size:12px;letter-spacing:.08em}
+.stats{display:flex;flex-wrap:wrap;gap:4px 18px;flex:1;min-width:0}
+.stat{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.stat .k{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.stat .v{font-weight:700}
+.bar{display:inline-block;width:54px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc)}
+.bar.hp i{background:var(--d-ok)}
+.bar.hp.low i{background:var(--c-meat)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;font-size:14px}
+.btn:hover{border-color:var(--acc)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:700}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.warn{border-color:var(--c-meat);color:var(--c-meat)}
+
+nav.scenes{display:flex;gap:6px;overflow-x:auto;padding-block:4px 6px;scrollbar-width:thin}
+.scene-tab{flex:0 0 auto;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:14px}
+.scene-tab .dot{width:9px;height:9px;border-radius:50%;background:var(--sc)}
+.scene-tab[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+
+.banner{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 20px;align-items:end;padding-block:18px 14px;border-bottom:2px solid var(--acc)}
+.banner h1{font-family:var(--f-disp);font-weight:700;font-size:clamp(32px,5.4vw,50px);line-height:1;margin:0;color:var(--acc-ink);letter-spacing:.04em}
+.banner .tag{margin:0;color:var(--muted);font-size:14px}
+.banner .note{margin:4px 0 0;font-size:13px}
+.banner .note b{color:var(--acc-ink)}
+.howto{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.howto summary{cursor:pointer;color:var(--ink);width:max-content}
+.howto ol{margin:6px 0 0;padding-left:20px;max-width:70ch}
+@media (max-width:620px){.banner{grid-template-columns:1fr}.stats{order:3;flex-basis:100%}}
+
+main.grid{display:grid;gap:16px;padding-block:16px 32px;grid-template-columns:300px minmax(0,1fr) 370px;grid-template-areas:"setup pot pantry";align-items:start}
+@media (max-width:1120px){main.grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"setup pantry" "pot pot"}}
+@media (max-width:720px){main.grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"setup" "pantry" "pot"}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+#setup{grid-area:setup}#pot{grid-area:pot}#pantry{grid-area:pantry}
+@media (min-width:1121px){#pot{position:sticky;top:12px}}
+h2{font-family:var(--f-disp);font-weight:700;font-size:21px;margin:0 0 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2 small{font-family:var(--f-body);font-weight:400;font-size:12px;color:var(--muted)}
+.fields{display:grid;gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+.lab{font-size:12px;color:var(--muted);letter-spacing:.1em;display:flex;justify-content:space-between;align-items:baseline}
+.lab b{color:var(--ink);letter-spacing:0;font-size:14px}
+select{width:100%;font:inherit;font-size:14px;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:5px 10px;font-size:14px;display:inline-flex;align-items:center;gap:5px}
+.chip[aria-pressed="true"]{background:var(--acc-soft);border-color:var(--acc);color:var(--acc-ink);font-weight:700}
+.chip:disabled{opacity:.32;cursor:not-allowed}
+.fit{font-size:9px;letter-spacing:1px;color:var(--muted);font-weight:400}
+.helpers{display:grid;gap:6px}
+.helper{text-align:left;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:7px 10px}
+.helper b{display:block;font-size:14px}
+.helper span{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+.helper[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft)}
+input[type=range]{width:100%;accent-color:var(--acc);margin:0}
+input[type=range]:disabled{opacity:.4}
+.flames{display:flex;gap:3px;height:18px;align-items:end}
+.flames i{flex:1;background:var(--line);border-radius:3px 3px 1px 1px}
+.flames i.on{background:var(--flame)}
+.rcard{border:1px dashed var(--acc);border-radius:9px;padding:10px 11px;font-size:13px;background:var(--acc-soft);display:grid;gap:6px}
+.rcard .meta{color:var(--muted)}
+.rcard .req{display:flex;flex-wrap:wrap;gap:4px}
+.req span{border-radius:5px;padding:0 6px;background:var(--panel);border:1px solid var(--line);font-size:12px}
+.req span.have{border-color:var(--d-ok);color:var(--d-ok);font-weight:700}
+
+.src-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
+.src-tab{border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 11px;font-size:14px}
+.src-tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.src-desc{font-size:12px;color:var(--muted);margin:0 0 10px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
+.item{display:flex;align-items:center;gap:7px;text-align:left;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:6px 7px;min-width:0}
+.item:hover:not(:disabled){border-color:var(--acc)}
+.item:disabled{opacity:.4;cursor:not-allowed}
+.item .t{min-width:0}
+.item .nm{display:block;font-size:13px;line-height:1.25;overflow-wrap:anywhere}
+.item .pr{display:block;font-size:11px;color:var(--muted);font-family:var(--f-num)}
+.stamp{flex:0 0 auto;width:26px;height:26px;border-radius:6px;display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:15px;line-height:1;color:#fff;background:var(--cc)}
+.c-meat{--cc:var(--c-meat)}.c-sea{--cc:var(--c-sea)}.c-veg{--cc:var(--c-veg)}.c-starch{--cc:var(--c-starch)}.c-egg{--cc:var(--c-egg)}.c-aro{--cc:var(--c-aro)}.c-sau{--cc:var(--c-sau)}.c-liq{--cc:var(--c-liq)}.c-oil{--cc:var(--c-oil)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:12px;font-size:11px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.legend i{width:9px;height:9px;border-radius:3px;background:var(--cc)}
+
+.potlist{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.prow{display:grid;grid-template-columns:20px 26px minmax(0,1fr) auto auto;align-items:center;gap:8px;padding:5px 6px;border-radius:8px;background:var(--panel2)}
+.prow .idx{font-family:var(--f-num);font-size:12px;color:var(--muted);text-align:right}
+.prow .nm{font-size:14px;line-height:1.25;min-width:0}
+.prow .nm small{display:block;font-size:11px;color:var(--muted)}
+.badge{font-size:11px;padding:1px 8px;border-radius:999px;color:#fff;background:var(--bc);white-space:nowrap}
+.b-raw{--bc:var(--d-raw)}.b-half{--bc:var(--d-half)}.b-ok{--bc:var(--d-ok)}.b-over{--bc:var(--d-over)}.b-burnt{--bc:var(--d-burnt)}.b-none{--bc:transparent;color:var(--muted)}
+.mv{display:flex;gap:1px}
+.mini{border:0;background:transparent;color:var(--muted);padding:2px 6px;border-radius:5px;font-size:13px;line-height:1.3}
+.mini:hover{background:var(--line);color:var(--ink)}
+.empty{border:1.5px dashed var(--line);border-radius:10px;padding:26px 12px;text-align:center;color:var(--muted);font-size:14px}
+.potmeta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted);margin-bottom:10px}
+.potmeta b{color:var(--ink)}
+.flavor{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:14px}
+.fl{display:grid;gap:3px;text-align:center;font-size:12px;color:var(--muted)}
+.tube{height:44px;background:var(--panel2);border:1px solid var(--line);border-radius:5px;position:relative;overflow:hidden}
+.tube i{position:absolute;left:0;right:0;bottom:0;background:var(--acc);opacity:.75}
+.tube .ideal{position:absolute;left:0;right:0;border-top:1px dashed var(--ink);border-bottom:1px dashed var(--ink);opacity:.35}
+.predict{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);flex-wrap:wrap}
+.predict .p{font-size:13px;color:var(--muted)}
+.predict .p b{font-size:18px;color:var(--ink);font-family:var(--f-disp)}
+.cookbtn{font-family:var(--f-disp);font-size:20px;padding:9px 26px;letter-spacing:.1em}
+.hints{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px}
+.hints li{font-size:12px;border-radius:5px;padding:1px 7px;background:var(--panel2);border:1px solid var(--line)}
+.hints li.bad{border-color:var(--c-meat);color:var(--c-meat)}
+.hints li.good{border-color:var(--d-ok);color:var(--d-ok)}
+
+.overlay{position:fixed;inset:0;background:var(--shade);display:grid;place-items:center;z-index:50;padding:max(14px,env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) max(14px,env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px))}
+.sheet{background:var(--panel);color:var(--ink);border-radius:14px;width:min(640px,100%);max-height:100%;overflow:auto;padding:20px;border:1px solid var(--line)}
+.sheet h3{font-family:var(--f-disp);font-size:24px;margin:0 0 10px}
+.cooking .potart{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.wokart{width:64px;height:64px;flex:0 0 auto}
+.prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden;margin-bottom:12px}
+.prog i{display:block;height:100%;width:0;background:var(--flame);transition:width .3s}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:14px}
+.tl li{display:grid;grid-template-columns:60px minmax(0,1fr);gap:8px;animation:fadein .25s}
+.tl time{font-family:var(--f-num);color:var(--muted);font-size:12px;padding-top:2px}
+.tl li.bad span{color:var(--c-meat)}
+.tl li.good span{color:var(--d-ok)}
+@keyframes fadein{from{opacity:.2;transform:translateY(3px)}to{opacity:1;transform:none}}
+.res-head{display:flex;gap:16px;align-items:center;margin-bottom:12px}
+.grade{flex:0 0 auto;width:86px;height:86px;border-radius:50%;border:3px solid var(--gc);color:var(--gc);display:grid;place-items:center;font-family:var(--f-disp);font-weight:700;font-size:42px;line-height:1;transform:rotate(-9deg)}
+.res-head h3{margin:0;font-size:clamp(22px,4.6vw,30px);text-wrap:balance}
+.res-head .sub{color:var(--muted);font-size:14px}
+.bd{display:grid;grid-template-columns:44px minmax(0,1fr) 36px;gap:5px 10px;align-items:center;font-size:13px;margin:12px 0}
+.bd .bar{width:100%;height:8px}
+.bd .val{text-align:right;color:var(--muted)}
+.chiprow{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.dchip{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:2px 8px 2px 3px;border-radius:999px;background:var(--panel2);border:1px solid var(--line)}
+.dchip .stamp{width:18px;height:18px;font-size:11px;border-radius:50%}
+.evs{list-style:none;padding:0;margin:8px 0;display:grid;gap:3px;font-size:14px}
+.evs li.good::before{content:"＋ ";color:var(--d-ok)}
+.evs li.bad::before{content:"－ ";color:var(--c-meat)}
+.evs li.info::before{content:"· ";color:var(--muted)}
+.quote{margin:12px 0;padding:10px 14px;border-left:3px solid var(--acc);background:var(--acc-soft);border-radius:0 8px 8px 0;font-family:var(--f-disp);font-size:17px}
+.res-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.res-acts .btn{flex:1 1 130px;padding:9px 10px}
+.res-acts small{display:block;font-size:11px;font-weight:400;opacity:.85}
+.codex-sec{margin-bottom:16px}
+.codex-sec h4{margin:0 0 6px;font-family:var(--f-disp);font-size:18px;color:var(--sc)}
+.codex-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px}
+.cx{border:1px solid var(--line);border-radius:7px;padding:5px 8px;font-size:13px;display:flex;justify-content:space-between;gap:6px;background:var(--panel2)}
+.cx.unk{color:var(--muted);border-style:dashed;background:transparent}
+.cx b{font-family:var(--f-disp)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:9px;font-size:14px;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+footer{color:var(--muted);font-size:12px;padding-block:0 28px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-scene="home">
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="logo">煮<b>飯</b>仔</span><small>七個灶頭 · 料理模擬</small></div>
+    <div class="stats" id="stats"></div>
+    <div class="acts">
+      <button class="btn" data-act="work" id="btnWork">去打工</button>
+      <button class="btn" data-act="codex">食譜圖鑑</button>
+      <button class="btn" data-act="reset" id="btnReset">重新開始</button>
+    </div>
+  </header>
+  <nav class="scenes" id="scenes" aria-label="場景"></nav>
+  <section class="banner" id="banner"></section>
+  <main class="grid">
+    <section class="panel" id="setup" aria-label="灶台設定"></section>
+    <section class="panel" id="pantry" aria-label="食材"></section>
+    <section class="panel" id="pot" aria-label="落鑊次序"></section>
+  </main>
+  <footer>進度會儲存喺呢部機嘅瀏覽器。煮飯仔 · fiveathree</footer>
+</div>
+<div class="overlay" id="ov" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+'use strict';
+/* ================= 資料 ================= */
+const MEALS=['早餐','午餐','晚餐'];
+const FLK=['s','t','a','h','u','x','f'];
+const FLN={s:'鹹',t:'甜',a:'酸',h:'辣',u:'鮮',x:'香',f:'油'};
+const CATN={meat:'肉',sea:'海鮮',egg:'蛋奶',veg:'蔬菜',starch:'澱粉',aro:'香料',liq:'湯水酒',sau:'調味',oil:'油'};
+const BULK=['meat','sea','egg','veg','starch'];
+const ING={};
+function I(id,n,c,st,ck,raw,p,fl,o){ING[id]=Object.assign({id,n,c,st,ck,raw,p,fl:fl||{}},o||{});}
+// 油
+I('oil','生油','oil',0,0,1,3,{f:1},{ch:'油'});
+I('butter','牛油','oil',0,0,1,8,{f:1.1,x:.6},{tag:'牛油'});
+I('lard','豬油','oil',0,0,1,4,{f:1.1,x:.8});
+I('olive','橄欖油','oil',0,0,1,10,{f:.9,x:.3},{ch:'欖'});
+// 香料
+I('garlic','蒜頭','aro',1,1.5,1,3,{x:1.2},{tol:4,tag:'蒜蓉'});
+I('ginger','薑','aro',1,1.5,1,3,{x:.8,h:.2},{tol:4});
+I('scallion','蔥段','aro',1,1.5,1,3,{x:.8},{tol:3});
+I('shallot','乾蔥','aro',1,1.5,1,4,{x:1,t:.2},{tol:4});
+I('chili','辣椒','aro',1,1.5,1,3,{h:1.2},{tol:3});
+I('wildonion','野蔥','aro',1,1.5,1,0,{x:.7},{tol:3});
+I('rosemary','迷迭香','aro',4,0,1,12,{x:1},{ch:'迷'});
+I('thyme','百里香','aro',4,0,1,12,{x:.9},{ch:'百'});
+I('herbs','野生香草','aro',4,0,1,0,{x:.8},{ch:'草'});
+I('parsley','番茜','aro',6,0,1,6,{x:.5},{ch:'茜'});
+I('coriander','芫荽','aro',6,0,1,4,{x:.6});
+I('scallion2','蔥花','aro',6,0,1,3,{x:.6},{ch:'蔥'});
+// 肉
+I('bacon','煙肉','meat',1,4,0,15,{s:.4,f:1,x:.8,u:.4},{tol:2.5,fat:1});
+I('porkchop','豬扒','meat',2,8,0,25,{u:.6,f:.4},{tol:1.4});
+I('ribs','排骨','meat',2,15,0,30,{u:.7,f:.5},{tol:1.6});
+I('mince','免治豬肉','meat',2,4,0,18,{u:.6,f:.5},{tol:1.6,ch:'免'});
+I('charsiu','叉燒','meat',2,2,1,30,{t:.6,u:.5,s:.2},{tol:3,ch:'叉'});
+I('wings','雞翼','meat',2,10,0,22,{u:.6,f:.4},{tol:2});
+I('drum','雞髀','meat',2,14,0,20,{u:.7,f:.4},{tol:1.8});
+I('beef','牛肉片','meat',2,4,0,28,{u:.8},{tol:1.5,ch:'牛'});
+I('brisket','牛腩','meat',2,60,0,45,{u:1,f:.6},{tol:2.5,ch:'腩'});
+I('spam','午餐肉','meat',2,2,1,15,{s:.4,f:.7,u:.3},{tol:3,ch:'午',fat:1});
+I('sausage','香腸','meat',2,4,0,12,{s:.3,f:.6},{tol:2.5,ch:'腸'});
+I('ribeye','肉眼扒','meat',2,8,1,120,{u:1.2,f:1},{steak:1,ch:'眼'});
+I('sirloin','西冷','meat',2,8,1,100,{u:1.1,f:.6},{steak:1});
+I('wagyu','和牛','meat',2,5,1,380,{u:1.5,f:1.5},{steak:1,fat:1});
+I('lamb','羊架','meat',2,14,0,160,{u:1,f:.9,x:.4},{steak:1});
+I('duck','鴨胸','meat',2,10,0,90,{u:1,f:1.1},{steak:1,fat:1});
+I('foie','鵝肝','meat',2,3,0,220,{u:1.2,f:1.8},{tol:1,fat:1,ch:'肝'});
+I('rabbit','野兔','meat',2,25,0,0,{u:.8},{tol:1.5,ch:'兔'});
+// 海鮮
+I('shrimp','蝦','sea',2,3,0,40,{u:1,t:.2},{tol:1.2});
+I('fishfillet','魚柳','sea',2,4,0,20,{u:.6},{tol:1.3});
+I('grouper','石斑','sea',2,12,0,150,{u:1.3,t:.2},{tol:1.3,ch:'斑'});
+I('squid','魷魚','sea',2,3,0,35,{u:.8},{tol:1.3});
+I('clams','蜆','sea',2,5,0,30,{u:1.1,s:.2},{tol:1.4});
+I('crab','肉蟹','sea',2,12,0,160,{u:1.4,t:.3},{tol:1.4,ch:'蟹'});
+I('mussels','青口','sea',2,5,0,70,{u:1.1,s:.2},{tol:1.4});
+I('lobster','龍蝦','sea',2,10,0,380,{u:1.5,t:.4},{tol:1.3});
+I('scallop','帶子','sea',2,2,1,120,{u:1.2,t:.4},{tol:1});
+I('oyster','生蠔','sea',2,2,1,90,{u:1.2,s:.3},{tol:.9,ch:'蠔'});
+I('streamfish','溪魚','sea',2,9,0,0,{u:.8},{tol:1.4});
+I('dace','豆豉鯪魚','sea',2,1,1,18,{s:.5,u:.6,f:.7,x:.5},{tol:5,ch:'鯪'});
+// 蛋奶
+I('egg','雞蛋','egg',3,2,0,3,{u:.4,f:.2},{tol:2,ch:'蛋'});
+I('cheese','芝士','egg',5,1.5,1,12,{s:.3,f:.9,u:.5},{tol:9,tag:'芝士'});
+// 蔬菜
+I('onion','洋蔥','veg',1,4,1,4,{t:.5,x:.6},{tol:3});
+I('potato','薯仔','veg',3,12,0,5,{t:.2},{tol:1.8});
+I('carrot','紅蘿蔔','veg',3,9,1,4,{t:.5},{tol:2.5,ch:'紅'});
+I('radish','白蘿蔔','veg',3,14,1,5,{t:.3},{tol:3,ch:'蘿'});
+I('broccoli','西蘭花','veg',3,4,1,10,{},{tol:1.5,ch:'蘭'});
+I('cabbage','椰菜','veg',3,4,1,6,{t:.3},{tol:1.8});
+I('tomato','番茄','veg',3,2.5,1,5,{a:.7,t:.4,u:.4},{tol:2.2});
+I('pepper','青椒','veg',3,2.5,1,5,{x:.3},{tol:1.8,ch:'椒'});
+I('corn','粟米','veg',3,5,0,6,{t:.7},{tol:2});
+I('shiitake','冬菇','veg',3,6,0,15,{u:1,x:.5},{tol:2.5,ch:'菇'});
+I('mushroom','蘑菇','veg',3,4,1,10,{u:.6},{tol:2.2,ch:'蘑'});
+I('choysum','菜心','veg',4,2.5,0,8,{},{tol:1.5});
+I('lettuce','生菜','veg',4,1,1,6,{},{tol:1.6});
+I('spinach','菠菜','veg',4,1.5,1,8,{},{tol:1.6});
+I('sprouts','芽菜','veg',4,2,1,4,{},{tol:1.6});
+I('youmak','油麥菜','veg',4,1.5,1,8,{},{tol:1.7,ch:'麥'});
+I('asparagus','蘆筍','veg',4,4,0,40,{t:.2},{tol:1.5});
+I('wildveg','野菜','veg',4,3,0,0,{a:.1},{tol:1.8});
+I('wildmush','野菇','veg',3,5,0,0,{u:1},{tol:2.2});
+I('truffle','松露','veg',6,0,1,300,{x:2,u:.8},{tag:'松露'});
+// 澱粉
+I('rice','白飯','starch',3,3,1,5,{},{tol:5,ch:'飯'});
+I('rawrice','米','starch',3,18,0,4,{t:.1},{tol:1.4});
+I('noodle','即食麵','starch',4,3,0,5,{s:.3,f:.3},{tol:1.5,ch:'麵'});
+I('spaghetti','意粉','starch',3,9,0,10,{},{tol:1.5});
+I('macaroni','通粉','starch',3,7,0,8,{},{tol:1.7});
+I('hofun','河粉','starch',4,2,1,6,{},{tol:2.2,ch:'河'});
+I('ricenoodle','米粉','starch',4,3,0,6,{},{tol:1.8});
+I('toast','方包','starch',4,3,1,4,{t:.1},{tol:1.6});
+I('baguette','法包','starch',5,1.5,1,15,{x:.3},{tol:4});
+I('fries','薯條','starch',3,6,0,12,{f:.4},{tol:1.5});
+// 湯水酒
+I('water','水','liq',3,0,1,0,{});
+I('stock','上湯','liq',3,0,1,8,{u:.8,s:.2});
+I('redwine','紅酒','liq',3,0,1,60,{a:.3,x:.8,t:.2},{tag:'紅酒'});
+I('whitewine','白酒','liq',3,0,1,50,{a:.4,x:.6},{tag:'白酒'});
+I('beer','啤酒','liq',3,0,1,12,{x:.3},{tag:'啤酒'});
+I('coconut','椰汁','liq',4,0,1,10,{t:.5,f:.7},{tag:'椰汁'});
+I('milk','鮮奶','liq',4,0,1,8,{f:.5,t:.3},{tag:'奶油'});
+I('cream','忌廉','liq',4,0,1,15,{f:1.2,t:.2},{tag:'忌廉'});
+// 調味
+I('salt','鹽','sau',5,0,1,1,{s:.8});
+I('seasalt','海鹽','sau',5,0,1,0,{s:.8,u:.1});
+I('sugar','糖','sau',5,0,1,1,{t:.8});
+I('soy','生抽','sau',5,0,1,2,{s:.7,u:.3},{tag:'豉油'});
+I('darksoy','老抽','sau',5,0,1,2,{s:.4,t:.2},{tag:'豉油皇'});
+I('oystersauce','蠔油','sau',5,0,1,3,{s:.5,u:.7,t:.2},{tag:'蠔油'});
+I('blackbean','豆豉','sau',5,0,1,3,{s:.6,u:.4,x:.5},{tag:'豉汁'});
+I('blackpepper','黑椒','sau',5,0,1,4,{h:.5,x:.6},{tag:'黑椒'});
+I('whitepepper','胡椒粉','sau',5,0,1,2,{h:.4,x:.3},{ch:'胡'});
+I('curry','咖喱','sau',5,0,1,5,{h:.9,x:1,s:.2},{tag:'咖喱'});
+I('ketchup','茄汁','sau',5,0,1,3,{t:.6,a:.6,s:.2},{tag:'茄汁'});
+I('worcester','喼汁','sau',5,0,1,4,{a:.6,u:.4,s:.25});
+I('satay','沙爹醬','sau',5,0,1,6,{h:.5,x:1,f:.4,s:.25},{tag:'沙爹'});
+I('xo','XO醬','sau',5,0,1,25,{u:1.1,h:.4,s:.4,f:.4},{tag:'XO醬',ch:'X'});
+I('sesame','麻油','sau',6,0,1,4,{x:.9,f:.3});
+I('vinegar','醋','sau',5,0,1,2,{a:1});
+I('honey','蜜糖','sau',5,0,1,6,{t:1.3,x:.2},{tag:'蜜汁'});
+I('dijon','芥末醬','sau',5,0,1,10,{h:.3,a:.3,x:.3},{tag:'芥末'});
+I('msg','味精','sau',5,0,1,1,{u:1.4});
+I('saltpepper','椒鹽','sau',5,0,1,3,{s:.6,h:.5,x:.4},{tag:'椒鹽'});
+I('starch','生粉','sau',2,0,1,2,{},{ch:'粉'});
+I('condmilk','煉奶','sau',6,0,1,6,{t:1.4,f:.4});
+I('pb','花生醬','sau',4,0,1,10,{t:.5,f:.8,x:.6},{ch:'花'});
+I('lemon','檸檬','sau',6,0,1,5,{a:1.2,x:.4},{tag:'檸檬'});
+
+const METH={
+  stir:{n:'炒',mult:1.25,t:[.5,15,4],h:7,ow:1,oil:1,spread:.55},
+  pan:{n:'煎',mult:1.1,t:[.5,25,5],h:6,ow:.8,oil:1,spread:.5},
+  fry:{n:'炸',mult:1.6,t:[.5,15,3],h:7,ow:.5,oil:1,spread:.5},
+  boil:{n:'煮',mult:1,t:[1,60,8],h:6,ow:.6,liq:1,spread:.6},
+  braise:{n:'炆',mult:.8,t:[10,180,45],h:4,ow:.7,liq:1,spread:.5},
+  steam:{n:'蒸',mult:1,t:[2,60,12],h:7,ow:.3,spread:.15},
+  bake:{n:'焗',mult:.5,t:[2,90,15],h:6,ow:.4,spread:.3},
+  grill:{n:'燒',mult:1,t:[1,60,8],h:7,ow:.4,spread:.4},
+  raw:{n:'涼拌',mult:0,t:[0,0,0],h:0,ow:.2,spread:0}
+};
+const MKEYS=Object.keys(METH);
+const WARE={
+  wok:{n:'鑊',cap:9,fit:{stir:1,pan:.7,fry:1,boil:.7,braise:.6,steam:.8,raw:.3}},
+  pan:{n:'平底鑊',cap:9,fit:{stir:.7,pan:1,fry:.6,boil:.4,braise:.4,grill:.5,raw:.3}},
+  pot:{n:'煲',cap:9,fit:{stir:.2,pan:.2,fry:.5,boil:1,braise:1,steam:.6}},
+  steamer:{n:'蒸籠',cap:9,fit:{steam:1,boil:.2}},
+  oven:{n:'焗爐',cap:9,fit:{bake:1,grill:.8}},
+  ricecooker:{n:'電飯煲',cap:5,fixed:5,fit:{boil:.85,steam:.85,braise:.6,bake:.3,pan:.2,stir:.1}},
+  ihpan:{n:'電磁爐小鍋',cap:6,fit:{stir:.6,pan:.75,boil:.9,braise:.5,fry:.3,steam:.3}},
+  fryer:{n:'炸爐',cap:9,fit:{fry:1}},
+  griddle:{n:'鐵板',cap:9,fit:{pan:1,grill:.9,stir:.5}},
+  grill:{n:'炭爐',cap:9,fit:{grill:1,pan:.4}},
+  copper:{n:'銅鍋',cap:9,fit:{boil:1,braise:1,pan:.75,stir:.4,bake:.6}},
+  campfire:{n:'營火樹枝',cap:7,fit:{grill:1}},
+  messtin:{n:'鋁兜',cap:7,fit:{boil:1,braise:.6,stir:.4,pan:.5,steam:.4}},
+  bamboo:{n:'竹筒',cap:7,fit:{steam:1,boil:.8}},
+  bowl:{n:'大碗',cap:0,fit:{raw:1}}
+};
+const HELP={
+  mum:{n:'阿媽',d:'幫你執味，調味扣分減半，不過一路嘮叨'},
+  bro:{n:'細佬',d:'試味好醒 +2，但有機會偷食一舊肉'},
+  auntie:{n:'隔籬王太',d:'跟足食譜有秘方加成 +6'},
+  roomie:{n:'室友阿B',d:'影相打卡名聲加倍，三成機會偷食'},
+  nerd:{n:'學霸同學',d:'計時好準，熟度容錯大啲'},
+  wokmaster:{n:'炒鑊師傅',d:'鑊氣加強，起火會變火焰秀'},
+  waiter:{n:'伙記',d:'出餐快手，售價 +25%'},
+  boss:{n:'老闆娘',d:'識做生意，售價 +10%，名聲多啲'},
+  barista:{n:'水吧師傅',d:'每碟配杯凍檸茶，+$15，評分 +2'},
+  sister:{n:'樓面阿姐',d:'催單有一手，出餐時間當快三成'},
+  sous:{n:'副廚',d:'幫手睇住啲扒，熟度容錯大啲'},
+  somm:{n:'侍酒師',d:'配酒售價 +40%，有酒入饌再 +3'},
+  chef:{n:'主廚 Antoine',d:'擺盤 +8，但煮得差會當眾鬧你'},
+  coach:{n:'求生教練',d:'識認毒菇，捕捉成功率高啲'},
+  hiker:{n:'行山友',d:'幫手睇火，營火唔會忽大忽細'},
+  dog:{n:'狗仔',d:'幫你搵食材，有時多捉一份'}
+};
+const SC={
+ home:{n:'普通屋企',tag:'兩頭煤氣爐，阿媽個鑊用咗廿年。',heat:7,
+  wares:['wok','pan','pot','steamer','ricecooker','oven','bowl'],helpers:['mum','bro','auntie'],
+  serve:'開飯，俾屋企人食',sell:0,
+  note:'雪櫃剩菜免費但每日得幾樣。屋企爐頭最大火 <b>7</b>，炸嘢會油彈。',
+  src:[
+   {id:'market',n:'街市',d:'新鮮靚嘢，品質 +12%',mul:1,q:1.12,items:['porkchop','ribs','mince','charsiu','wings','drum','beef','brisket','shrimp','fishfillet','grouper','squid','clams','egg','tomato','potato','carrot','radish','broccoli','cabbage','pepper','corn','shiitake','choysum','lettuce','spinach','sprouts','youmak','onion','garlic','ginger','scallion','shallot','chili','scallion2','coriander']},
+   {id:'super',n:'超市',d:'標價清楚，貴少少',mul:1.15,q:1,items:['spam','sausage','bacon','egg','cheese','milk','cream','coconut','noodle','spaghetti','macaroni','rawrice','toast','butter','mushroom','lemon','beer']},
+   {id:'fridge',n:'雪櫃',d:'琴日剩低嘅，免費但唔多，品質打個折',mul:0,q:.85,stock:1,pool:['rice','rice','egg','spam','tomato','sausage','lettuce','charsiu','cheese','choysum','mince']},
+   {id:'rack',n:'調味架',d:'油鹽醬醋',mul:1,q:1,items:['oil','water','stock','salt','sugar','soy','darksoy','oystersauce','blackbean','whitepepper','sesame','starch','vinegar','ketchup','curry','msg','honey']}],
+  cm:{good:['阿爸：「{d}好送飯，再嚟一碗！」','細佬：「今晚唔使叫外賣喇！」','阿媽：「都幾似樣，邊個教你？」'],
+      mid:['阿爸：「食得。」然後繼續睇新聞。','細佬：「你係咪落少咗嘢？」','阿媽：「下次火候再控制下。」'],
+      bad:['阿媽：「得喇得喇，聽日我煮。」','細佬靜靜雞開咗個杯麵。','阿爸夾咗一啖，然後話自己唔肚餓。']}},
+ dorm:{n:'學生宿舍',tag:'一個電磁爐、一個電飯煲，舍監禁明火。',heat:6,
+  wares:['ricecooker','ihpan','bowl'],helpers:['roomie','nerd'],
+  serve:'賣俾同層宿友',sell:1.3,
+  note:'電磁爐開到 <b>6</b> 有機會跳掣；炸嘢或者燒嘢會引舍監。公用雪櫃嘅嘢「借用」有風險。',
+  src:[
+   {id:'cvs',n:'便利店',d:'24 小時，但貴',mul:1.35,q:.9,items:['noodle','egg','spam','sausage','toast','lettuce','cheese','milk','rice','corn','dace','pb','condmilk','beer']},
+   {id:'wet',n:'樓下街市',d:'行十分鐘，抵食',mul:1,q:1.05,items:['drum','wings','mince','beef','choysum','youmak','tomato','onion','rawrice','shiitake','garlic','ginger','scallion2']},
+   {id:'share',n:'公用雪櫃',d:'唔係你嘅……免費，但可能俾人發現',mul:0,q:.8,stock:1,risky:1,pool:['egg','spam','cheese','milk','sausage','charsiu','rice','tomato']},
+   {id:'packs',n:'調味包',d:'外賣儲落嚟嘅',mul:1.2,q:1,items:['oil','water','salt','sugar','soy','oystersauce','ketchup','whitepepper','sesame','satay','curry','msg']}],
+  cm:{good:['室友：「嘩，你可以開舖喇！」','隔籬房聞到香味過嚟敲門。','宿友：「呢碟{d}值得我遲交功課。」'],
+      mid:['室友：「好過食杯麵。」','宿友：「抵食嘅。」','室友邊打機邊食完。'],
+      bad:['室友：「我……我飽咗。」','成層樓個煙霧警報響咗。','宿友將碟嘢擺返出走廊。']}},
+ dpd:{n:'大排檔',tag:'火力猛到風扇都吹唔熄，鑊氣就係招牌。',heat:9,
+  wares:['wok','pot','steamer','fryer'],helpers:['wokmaster','waiter','boss'],
+  serve:'出餐收錢',sell:2.2,
+  note:'爐頭去到 <b>9</b>：鑊、炒、火候 8 以上先有鑊氣。火候 9 炒或者炸有機會起火。',
+  src:[
+   {id:'frozen',n:'凍肉舖',d:'平，但係凍肉',mul:.7,q:.85,items:['beef','porkchop','ribs','wings','drum','mince','spam','sausage','charsiu','squid','shrimp','fishfillet']},
+   {id:'seafood',n:'海鮮檔',d:'游水生猛，品質 +20%',mul:1.2,q:1.2,items:['clams','crab','squid','shrimp','grouper','scallop']},
+   {id:'veg',n:'菜檔',d:'熟客價',mul:.8,q:1.05,items:['pepper','onion','sprouts','choysum','youmak','tomato','chili','garlic','ginger','scallion','scallion2','coriander','hofun','ricenoodle','rice','egg']},
+   {id:'sauce',n:'醬料架',d:'師傅私家醬料',mul:1,q:1,items:['lard','oil','water','stock','beer','salt','sugar','soy','darksoy','oystersauce','blackbean','saltpepper','starch','xo','whitepepper','sesame','msg']}],
+  cm:{good:['熟客：「呢味有鑊氣，再嚟枝啤酒！」','隔籬枱指住你碟{d}：「同佢一樣！」','老闆娘：「呢碟{d}可以放上牆。」'],
+      mid:['食客：「都 OK，冇上次咁正。」','熟客：「送酒就啱。」','食客默默食完，冇乜表情。'],
+      bad:['食客：「老闆，呢碟{d}係咪整錯咗？」','伙記偷偷將碟嘢倒咗。','熟客：「今日師傅放假？」']}},
+ cha:{n:'茶記冰室',tag:'快、靚、正，三分鐘出餐。',heat:8,
+  wares:['wok','pan','pot','oven','fryer'],helpers:['barista','sister','boss'],
+  serve:'出餐收錢',sell:1.8,
+  note:'快就係王道：煮得快過標準時間有加分，太慢客人會嬲。',
+  src:[
+   {id:'supplier',n:'食材供應商',d:'批發價，貨色一般',mul:.8,q:.95,items:['spam','egg','noodle','porkchop','beef','wings','fishfillet','sausage','toast','rice','macaroni','spaghetti','cheese','butter','condmilk','pb','onion','tomato','pepper','corn','lettuce']},
+   {id:'grocery',n:'雜貨舖',d:'醬料乾貨',mul:1,q:1,items:['oil','water','stock','milk','coconut','salt','sugar','soy','darksoy','oystersauce','ketchup','worcester','satay','curry','whitepepper','starch','honey','msg','sesame','lemon']}],
+  cm:{good:['熟客：「快靚正！聽朝再嚟。」','阿叔：「呢個{d}有返以前嘅味道。」','上班族一路食一路影相。'],
+      mid:['上班族：「食完返工，冇所謂啦。」','熟客：「都係咁上下。」','學生：「抵食，夠飽。」'],
+      bad:['客人：「我叫嘅唔係呢樣嘢呀？」','阿姐：「你再咁煮老闆炒你魷魚。」','客人淨係飲咗杯奶茶就走。']}},
+ steak:{n:'扒房',tag:'燈光暗，餐牌冇寫價錢。',heat:9,
+  wares:['griddle','grill','pan','oven'],helpers:['sous','somm'],
+  serve:'出餐收錢',sell:3,
+  note:'每餐客人有指定熟度，扒嘅熟度要啱。',
+  src:[
+   {id:'importer',n:'進口肉商',d:'冰鮮空運，品質 +25%',mul:1,q:1.25,items:['ribeye','sirloin','wagyu','lamb','bacon','sausage']},
+   {id:'farm',n:'有機農場',d:'貴，但靚',mul:1.3,q:1.2,items:['potato','asparagus','mushroom','onion','garlic','tomato','broccoli','corn','carrot','lettuce','rosemary','thyme']},
+   {id:'pantry',n:'香料房',d:'',mul:1,q:1,items:['oil','olive','butter','water','stock','redwine','cream','salt','blackpepper','dijon','honey','worcester','fries']}],
+  cm:{good:['客人：「熟度啱啱好，同我要求一模一樣。」','食評人喺小簿仔寫咗好多字。','客人加多杯紅酒，話要慶祝。'],
+      mid:['客人：「價錢嚟講……麻麻。」','客人：「醬汁唔錯，塊扒就普通。」','客人禮貌咁笑一笑。'],
+      bad:['客人要求見經理。','客人：「我講明熟度㗎！」','客人塊扒切咗一刀就放低刀叉。']}},
+ french:{n:'法國餐廳',tag:'主廚只講法文，你只識講 oui。',heat:8,
+  wares:['copper','pan','oven','pot','bowl'],helpers:['chef','somm'],
+  serve:'出餐收錢',sell:4,
+  note:'要求高：冇主廚幫手會扣 5 分。食材貴，但賣得起價。',
+  src:[
+   {id:'air',n:'法國空運',d:'今朝先落機，品質 +35%',mul:1,q:1.35,items:['foie','truffle','duck','mussels','oyster','lobster','scallop','cheese']},
+   {id:'local',n:'本地街市',d:'',mul:1.1,q:1.05,items:['brisket','bacon','egg','onion','shallot','carrot','mushroom','garlic','potato','asparagus','tomato','spinach','parsley','thyme','baguette']},
+   {id:'cellar',n:'酒窖',d:'入饌用',mul:1,q:1,items:['redwine','whitewine']},
+   {id:'pantry',n:'調味櫃',d:'',mul:1,q:1,items:['butter','olive','water','stock','cream','milk','salt','blackpepper','dijon','honey','vinegar','sugar','lemon']}],
+  cm:{good:['主廚：「Magnifique！」然後拍咗拍你膊頭。','食評人：「呢碟{d}有靈魂。」','客人閉埋眼慢慢咀嚼。'],
+      mid:['主廚：「Bof……」聳一聳膊頭。','客人：「C\'est correct.」','食評人冇寫嘢，淨係飲咗啖水。'],
+      bad:['主廚將碟嘢掟入垃圾桶，用法文講咗好長一句。','客人用餐巾抹一抹嘴，靜靜離開。','食評人：「我會喺專欄提起你。」']}},
+ wild:{n:'野外求生',tag:'一個背囊、一盒火柴，同埋你嘅求生意志。',heat:7,
+  wares:['campfire','messtin','bamboo','bowl'],helpers:['coach','hiker','dog'],
+  serve:'同隊友分享',sell:0,
+  note:'食材靠自己搵，每次出手耗 <b>2</b> 健康，唔一定成功。營火會忽大忽細，有機會落雨。',
+  src:[
+   {id:'pack',n:'背囊',d:'帶上山嘅，每日補給',mul:0,q:1,stock:1,fixed:{spam:2,noodle:2,rawrice:2,sausage:1,seasalt:3,oil:1}},
+   {id:'stream',n:'溪邊',d:'打水、捉魚',mul:0,q:1.15,wild:1,chance:{water:1,streamfish:.5}},
+   {id:'forest',n:'山林',d:'採集，菇要識認',mul:0,q:1.15,wild:1,chance:{wildveg:.9,wildmush:.8,wildonion:.8,herbs:.85}},
+   {id:'trap',n:'陷阱',d:'等運到',mul:0,q:1.15,wild:1,chance:{rabbit:.35}}],
+  cm:{good:['行山友：「喺山上食到咁嘅嘢，值回票價！」','一隻松鼠喺樹上望住你流口水。','隊友：「我哋唔落山喇，喺度開餐廳。」'],
+      mid:['行山友：「肚餓就咩都好食。」','隊友：「有熱嘢食已經好好。」','隊友：「總好過能量棒。」'],
+      bad:['行山友：「我諗我食返條能量棒算。」','連蚊都唔叮你。','隊友默默收拾背囊準備落山。']}}
+};
+const SKEYS=Object.keys(SC);
+const SCOL={home:'#b8821b',dorm:'#1f968a',dpd:'#cf3a2f',cha:'#3a8a57',steak:'#9a3045',french:'#3554a4',wild:'#6d7f26'};
+
+const RECIPES=[
+ {id:'tomegg',s:'home',n:'番茄炒蛋',m:'stir',w:['wok','pan','ihpan'],req:['egg','tomato'],opt:['oil','sugar','salt','scallion2','ketchup'],seq:['oil','egg','tomato','sugar','salt'],h:6,t:3,p:38,hint:'蛋先炒到半凝，番茄後落，少少糖提鮮。'},
+ {id:'bbribs',s:'home',n:'豉汁蒸排骨',m:'steam',w:['steamer','wok','ricecooker'],req:['ribs','blackbean'],opt:['garlic','starch','soy','sugar','chili','oil'],seq:['ribs','starch','blackbean','garlic','soy'],h:7,t:15,p:68,hint:'排骨先用生粉、豆豉、蒜蓉醃，大火蒸十幾分鐘。'},
+ {id:'steamegg',s:'home',n:'蒸水蛋',m:'steam',w:['steamer','wok','ricecooker'],req:['egg','water'],opt:['salt','soy','scallion2','sesame'],seq:['egg','water','salt','soy','sesame'],h:3,t:9,p:28,hint:'蛋同水大約一比一點五，細火慢蒸先會滑。'},
+ {id:'wingpot',s:'home',n:'薯仔炆雞翼',m:'braise',w:['pot','wok','ricecooker'],req:['wings','potato'],opt:['ginger','garlic','soy','darksoy','oystersauce','sugar','water','onion','oil'],seq:['oil','ginger','wings','potato','water','soy','oystersauce'],h:4,t:35,p:58,hint:'雞翼先煎香，再加薯仔同水慢慢炆。'},
+ {id:'choysum',s:'home',n:'蒜蓉炒菜心',m:'stir',w:['wok','pan','ihpan'],req:['choysum','garlic'],opt:['oil','salt','oystersauce'],seq:['oil','garlic','choysum','salt'],h:7,t:2.5,p:32,hint:'蒜蓉爆香，大火快炒，最後先落鹽。'},
+ {id:'spamegg',s:'home',n:'午餐肉煎蛋',m:'pan',w:['pan','wok','ihpan'],req:['spam','egg'],opt:['oil','soy','rice'],seq:['oil','spam','egg','soy'],h:5,t:4,p:30,hint:'午餐肉煎到金黃，再打蛋落去。'},
+ {id:'instnoodle',s:'dorm',n:'即食麵加蛋',m:'boil',w:['ihpan','ricecooker','pot','messtin'],req:['noodle','egg','water'],opt:['spam','lettuce','sausage','scallion2'],seq:['water','noodle','spam','egg','lettuce'],h:6,t:4,p:20,hint:'水滾先落麵，蛋同配料隨後，唔好煮太耐。'},
+ {id:'rcchicken',s:'dorm',n:'電飯煲雞飯',m:'boil',w:['ricecooker'],req:['rawrice','water','drum'],opt:['shiitake','soy','ginger','sausage','scallion2','oystersauce'],seq:['rawrice','water','drum','shiitake','soy'],h:5,t:30,p:40,hint:'米同水先落，雞髀冬菇鋪面，一嘢煮晒。'},
+ {id:'spamrice',s:'dorm',n:'午餐肉炒飯',m:'stir',w:['ihpan','wok','pan'],req:['rice','spam','egg'],opt:['scallion2','soy','corn','oil','onion'],seq:['oil','egg','spam','rice','soy','scallion2'],h:6,t:4,p:32,hint:'隔夜飯先炒得散，蛋先落，豉油最後。'},
+ {id:'dacegreen',s:'dorm',n:'豆豉鯪魚油麥菜',m:'stir',w:['ihpan','wok'],req:['dace','youmak'],opt:['garlic','oil'],seq:['oil','garlic','youmak','dace'],h:6,t:2.5,p:30,hint:'罐頭連油一齊落，菜要炒得爽。'},
+ {id:'clams',s:'dpd',n:'豉椒炒蜆',m:'stir',w:['wok'],req:['clams','blackbean','pepper'],opt:['chili','garlic','ginger','scallion','oystersauce','starch','sugar','oil'],seq:['oil','garlic','blackbean','chili','clams','pepper','oystersauce'],h:9,t:3.5,p:88,hint:'豆豉蒜頭爆香先落蜆，猛火兜到全部開口。'},
+ {id:'saltsquid',s:'dpd',n:'椒鹽魷魚',m:'fry',w:['wok','fryer'],req:['squid','starch','saltpepper'],opt:['garlic','chili','oil'],seq:['oil','squid','starch','garlic','chili','saltpepper'],h:7,t:2,p:78,hint:'魷魚上粉，油要夠多（兩份以上），炸完再落椒鹽兜勻。'},
+ {id:'beefhofun',s:'dpd',n:'乾炒牛河',m:'stir',w:['wok'],req:['beef','hofun','sprouts','darksoy'],opt:['scallion','onion','oil','soy','sugar'],seq:['oil','beef','onion','hofun','sprouts','darksoy','scallion'],h:9,t:3,p:68,hint:'牛肉先泡油，河粉要猛火兜，鑊氣就係靈魂。'},
+ {id:'typhoon',s:'dpd',n:'避風塘炒蟹',m:'stir',w:['wok'],req:['crab','garlic','chili'],opt:['blackbean','scallion','oil','saltpepper','sugar','lard'],seq:['oil','crab','garlic','chili','blackbean','saltpepper'],h:8,t:7,p:228,hint:'蟹先炸熟，再落大量蒜蓉炒到金黃香脆。'},
+ {id:'spamnoodle',s:'cha',n:'餐蛋麵',m:'boil',w:['pot'],req:['noodle','spam','egg','water'],opt:['stock','lettuce'],seq:['water','noodle','spam','egg'],h:7,t:3.5,p:38,hint:'麵要彈牙，餐肉同蛋煮到啱啱熟就上。'},
+ {id:'frtoast',s:'cha',n:'西多士',m:'fry',w:['pan','fryer','wok'],req:['toast','pb','egg'],opt:['butter','condmilk','honey','oil'],seq:['oil','toast','pb','egg','butter','condmilk'],sweet:1,h:6,t:3,p:32,hint:'方包夾花生醬，浸蛋漿炸到金黃，牛油煉奶收尾。'},
+ {id:'bakedpork',s:'cha',n:'焗豬扒飯',m:'bake',w:['oven'],req:['porkchop','rice','ketchup','cheese'],opt:['onion','tomato','pepper','sugar','worcester'],seq:['rice','porkchop','onion','tomato','ketchup','cheese'],h:7,t:12,p:62,hint:'豬扒鋪喺飯面，淋茄汁再鋪芝士焗。'},
+ {id:'sataybeef',s:'cha',n:'沙爹牛肉麵',m:'boil',w:['pot'],req:['beef','noodle','satay'],opt:['water','stock','milk'],seq:['water','noodle','beef','satay','milk'],h:7,t:3.5,p:42,hint:'牛肉最後先落，沙爹醬加少少奶更香滑。'},
+ {id:'buttertoast',s:'cha',n:'奶油多',m:'bake',w:['oven','pan'],req:['toast','butter','condmilk'],opt:[],seq:['toast','butter','condmilk'],sweet:1,h:6,t:5,p:22,hint:'方包烘脆，牛油趁熱搽，煉奶唧滿面。'},
+ {id:'ribeye',s:'steak',n:'香煎肉眼扒',m:'pan',w:['griddle','pan'],req:['ribeye'],opt:['salt','blackpepper','butter','garlic','rosemary','thyme','oil'],seq:['oil','ribeye','salt','blackpepper','butter','garlic','rosemary'],h:8,t:3,p:268,hint:'大火封邊，最後落牛油、蒜頭同香草淋面。熟度睇客人要求。'},
+ {id:'sirloin',s:'steak',n:'黑椒西冷',m:'pan',w:['griddle','pan'],req:['sirloin','blackpepper'],opt:['onion','butter','redwine','cream','salt','oil'],seq:['oil','sirloin','blackpepper','onion','redwine','butter'],h:8,t:3,p:238,hint:'黑椒汁用煎扒剩低嘅肉汁加紅酒煮。'},
+ {id:'wagyu',s:'steak',n:'炙燒和牛',m:'grill',w:['grill','griddle'],req:['wagyu','salt'],opt:['garlic'],seq:['wagyu','salt','garlic'],h:9,t:1.5,p:688,hint:'和牛油花多，猛火快燒，三成至五成最好。'},
+ {id:'lamb',s:'steak',n:'香草燒羊架',m:'bake',w:['oven','grill'],req:['lamb','rosemary'],opt:['garlic','dijon','olive','salt','blackpepper','thyme'],seq:['olive','lamb','salt','blackpepper','dijon','rosemary','garlic'],h:7,t:15,p:328,hint:'羊架搽芥末醬同香草，焗到中間粉紅。'},
+ {id:'asparagus',s:'steak',n:'牛油煎蘆筍',m:'pan',w:['pan','griddle'],req:['asparagus','butter'],opt:['salt','garlic','blackpepper'],seq:['butter','asparagus','salt'],h:6,t:4,p:68,hint:'配扒一流，煎到爽脆就得。'},
+ {id:'bourg',s:'french',n:'紅酒燴牛肉',m:'braise',w:['copper','pot'],req:['brisket','redwine','carrot','onion'],opt:['bacon','mushroom','thyme','garlic','stock','butter','salt','blackpepper'],seq:['bacon','brisket','onion','carrot','garlic','redwine','stock','mushroom','thyme'],h:4,t:150,p:388,hint:'煙肉同牛肉先煎香，加紅酒慢火燴兩三個鐘。'},
+ {id:'moules',s:'french',n:'白酒煮青口',m:'boil',w:['copper','pot'],req:['mussels','whitewine','shallot'],opt:['butter','garlic','parsley','cream'],seq:['butter','shallot','garlic','mussels','whitewine','cream','parsley'],h:7,t:5,p:268,hint:'牛油炒香乾蔥，落青口同白酒，冚蓋煮到開口。'},
+ {id:'duck',s:'french',n:'香煎鴨胸',m:'pan',w:['pan','copper'],req:['duck'],opt:['salt','honey','redwine','thyme'],seq:['duck','salt','honey','redwine','thyme'],h:6,t:6,p:328,hint:'鴨皮向下，慢慢逼出鴨油，唔使另外落油。'},
+ {id:'foie',s:'french',n:'香煎鵝肝',m:'pan',w:['pan','copper'],req:['foie'],opt:['baguette','honey','salt','redwine'],seq:['foie','salt','honey','baguette'],h:8,t:1.5,p:428,hint:'鵝肝唔使落油，猛火每面煎半分鐘就夠。'},
+ {id:'lobster',s:'french',n:'牛油焗龍蝦',m:'bake',w:['oven','copper'],req:['lobster','butter','garlic'],opt:['cheese','cream','parsley','salt'],seq:['lobster','butter','garlic','cream','cheese','parsley'],h:7,t:14,p:788,hint:'龍蝦開邊，鋪牛油蒜蓉，焗到肉身啱啱轉白。'},
+ {id:'onionsoup',s:'french',n:'法式洋蔥湯',m:'boil',w:['copper','pot'],req:['onion','butter','stock','baguette','cheese'],opt:['thyme','whitewine','salt','blackpepper'],seq:['butter','onion','whitewine','stock','thyme','baguette','cheese'],h:5,t:30,p:168,hint:'洋蔥用牛油慢慢炒到焦糖色，加上湯，面鋪法包芝士。'},
+ {id:'oyster',s:'french',n:'檸檬生蠔',m:'raw',w:['bowl'],req:['oyster','lemon'],opt:['vinegar','shallot'],seq:['oyster','shallot','vinegar','lemon'],h:0,t:0,p:198,hint:'夠新鮮先好生食，擠檸檬就得。'},
+ {id:'fish',s:'wild',n:'燒溪魚',m:'grill',w:['campfire'],req:['streamfish','seasalt'],opt:['wildonion','herbs'],seq:['streamfish','seasalt','herbs'],h:6,t:10,p:0,hint:'樹枝串住條魚，撒鹽慢慢燒。'},
+ {id:'wildsoup',s:'wild',n:'野菜湯',m:'boil',w:['messtin'],req:['water','wildveg'],opt:['wildmush','wildonion','seasalt','noodle'],seq:['water','wildmush','wildveg','seasalt'],h:6,t:8,p:0,hint:'溪水煲滾落野菜，菇要認清楚先好落。'},
+ {id:'bamboorice',s:'wild',n:'竹筒飯',m:'steam',w:['bamboo'],req:['rawrice','water'],opt:['spam','wildmush','seasalt','sausage'],seq:['rawrice','water','spam','sausage'],h:6,t:25,p:0,hint:'米同水塞入竹筒，擺喺火邊焗熟。'},
+ {id:'rabbit',s:'wild',n:'烤野兔',m:'grill',w:['campfire'],req:['rabbit'],opt:['herbs','seasalt','wildonion'],seq:['rabbit','seasalt','herbs'],h:6,t:30,p:0,hint:'慢火轉住燒，外皮脆就啱。'},
+ {id:'campspam',s:'wild',n:'營火午餐肉',m:'grill',w:['campfire'],req:['spam'],opt:['seasalt'],seq:['spam','seasalt'],h:6,t:3,p:0,hint:'求生界經典，燒到邊位微焦。'}
+];
+const RBY={};RECIPES.forEach(r=>RBY[r.id]=r);
+const PAIRS=[['tomato','egg'],['blackbean','ribs'],['blackbean','clams'],['garlic','choysum'],['ginger','scallion'],['beef','onion'],['spam','egg'],['curry','potato'],['satay','beef'],['butter','garlic'],['redwine','brisket'],['whitewine','mussels'],['lemon','oyster'],['cheese','macaroni'],['honey','duck'],['rosemary','lamb'],['truffle','egg'],['xo','hofun'],['blackpepper','ribeye'],['ginger','fishfillet'],['scallion2','egg'],['garlic','shrimp'],['oystersauce','choysum'],['ketchup','porkchop'],['charsiu','egg'],['sausage','rice'],['bacon','egg'],['curry','fishfillet'],['garlic','squid'],['ginger','crab'],['cream','mushroom'],['coconut','curry']];
+const CLASH=[['condmilk','oystersauce'],['condmilk','blackbean'],['condmilk','fishfillet'],['pb','clams'],['ketchup','foie'],['lemon','milk'],['vinegar','milk'],['pb','oystersauce'],['honey','fishfillet']];
+const GRADES=[[94,'S','神級料理','#c9942b'],[82,'A','好味','#2e9449'],[68,'B','家常水準','#2c74b0'],[52,'C','求其啦','#7a6f63'],[36,'D','難食','#cc7d24'],[0,'E','黑暗料理','#4e3426']];
+const SL=['生肉','一成','三成','五成','七成','全熟','過火','燶'];
+const STH=[.3,.5,.7,.9,1.15,1.6,2.4];
+const ORDERS=['一成','三成','三成','五成','五成','五成','七成','七成','全熟'];
+
+/* ================= 狀態 ================= */
+const KEY='cookrice.v1';
+let S, CUR=null, PREV=null;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function newState(){
+  const s={day:1,meal:0,money:600,fame:0,exp:0,health:100,scene:'home',codex:{},stock:{},order:pick(ORDERS),pot:[],sel:{},src:{}};
+  return s;
+}
+function restock(){
+  SKEYS.forEach(k=>SC[k].src.forEach(src=>{
+    if(!src.stock)return;
+    const st={};
+    if(src.fixed)Object.assign(st,src.fixed);
+    else{const n=src.risky?4:5;for(let i=0;i<n;i++){const id=pick(src.pool);st[id]=(st[id]||0)+1;}}
+    S.stock[k+'.'+src.id]=st;
+  }));
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){
+  try{const t=localStorage.getItem(KEY);if(t){const s=JSON.parse(t);if(s&&s.day){return Object.assign(newState(),s);}}}catch(e){}
+  return null;
+}
+function level(){let L=1;while(S.exp>=30*L*(L+1))L++;return L}
+function lvNeed(L){return 30*L*(L+1)}
+function sel(){return S.sel[S.scene]||(S.sel[S.scene]=defaultSel(S.scene))}
+function defaultSel(k){
+  const sc=SC[k];const m=sc.wares.includes('wok')?'stir':(k==='dorm'?'boil':k==='steak'||k==='french'?'pan':'grill');
+  const w=bestWare(k,m);const cap=wareCap(k,w);
+  return {recipe:'',helper:'',method:m,ware:w,heat:Math.min(METH[m].h,cap),time:METH[m].t[2]};
+}
+function bestWare(k,m){let best=SC[k].wares[0],bf=-1;SC[k].wares.forEach(w=>{const f=WARE[w].fit[m]||0;if(f>bf){bf=f;best=w}});return best}
+function wareCap(k,w){return Math.min(SC[k].heat,WARE[w].cap)}
+function methodOK(k,m){return SC[k].wares.some(w=>(WARE[w].fit[m]||0)>=.3)}
+
+/* ================= 計算 ================= */
+function doneness(g,r,ctx,tolB){
+  const prot=g.c==='meat'||g.c==='sea'||g.c==='egg';
+  if(g.steak){
+    let k=STH.findIndex(t=>r<t);if(k<0)k=7;const lab=SL[k];
+    if(k===0)return{k:lab,q:.2,c:'raw',danger:!g.raw};
+    if(k===6)return{k:lab,q:.4,c:'over'};
+    if(k===7)return{k:lab,q:0,c:'burnt'};
+    if(ctx.order){const t=SL.indexOf(ctx.order);const df=Math.abs(k-t);
+      const q=df===0?1:df===1?(ctx.sous?.9:.75):df===2?.5:.3;
+      return{k:lab,q,c:df===0?'ok':df===1?'half':'over',miss:df>0};}
+    return{k:lab,q:(k===1||k===5)?.78:1,c:(k===1||k===5)?'half':'ok'};
+  }
+  const tol=(g.tol||1)*(1+tolB);
+  if(ctx.raw)return g.raw?{k:'生食',q:1,c:'ok'}:{k:'生',q:.05,c:'raw',danger:prot};
+  if(r<.5)return g.raw?{k:'生',q:.7,c:'raw'}:{k:'生',q:.05,c:'raw',danger:prot};
+  if(r<.8)return g.raw?{k:'半生',q:.88,c:'half'}:{k:'半生',q:.45,c:'half',danger:prot};
+  if(r<=1.6*tol)return{k:'啱啱好',q:1,c:'ok'};
+  if(ctx.liq)return tol>=2?{k:'炆腍',q:.9,c:'ok'}:(r<=2.6*tol?{k:'過火',q:.6,c:'over'}:{k:'煮爛',q:.4,c:'over'});
+  if(r<=2.6*tol)return{k:'過火',q:.55,c:'over'};
+  return{k:'燶',q:0,c:'burnt'};
+}
+function evaluate(rand){
+  const sk=S.scene,sc=SC[sk],se=sel(),mk=se.method,m=METH[mk],wk=se.ware,w=WARE[wk],hp=se.helper;
+  const R=rand?Math.random:()=>1;
+  const ev=[];const add=(t,k,tm)=>ev.push({t,k,tm});
+  let items=S.pot.map((p,i)=>Object.assign({},p,{g:ING[p.id]}));
+  let bonus=0,healthHit=0,fameHit=0;
+  if(hp==='bro'&&R()<.25){const ix=items.findIndex(x=>x.g.c==='meat'||x.g.c==='sea');if(ix>=0){add(`細佬趁你轉身偷食咗一舊${items[ix].g.n}`,'bad');items.splice(ix,1);}}
+  let heat=mk==='raw'?0:(w.fixed||se.heat);const T=mk==='raw'?0:se.time;let Teff=T;
+  if(wk==='campfire'&&hp!=='hiker'&&rand){const d=Math.round(Math.random()*4-2);if(d){heat=clamp(heat+d,1,8);add(d>0?`營火突然旺咗，實際火候變 ${heat}`:`營火弱咗落嚟，實際火候變 ${heat}`,'info',T*.3);}}
+  if(sk==='wild'&&mk!=='raw'&&R()<.15){Teff=T*.65;add('落雨！火勢弱晒','bad',Teff);}
+  if(sk==='dorm'&&wk==='ihpan'&&heat>=6&&R()<.35){Teff=Math.min(Teff,T*(.4+Math.random()*.4));add('啪！跳掣，成層樓黑晒','bad',Teff);}
+  let confiscated=false;
+  if(sk==='dorm'&&(mk==='fry'||mk==='grill')&&R()<.5){confiscated=true;add('舍監聞到味衝入嚟，全部沒收！','bad',T*.5);fameHit-=5;}
+  const hasOil=items.some(i=>i.g.c==='oil'||i.g.fat),oilN=items.filter(i=>i.g.c==='oil').length,hasLiq=items.some(i=>i.g.c==='liq');
+  let doneMul=1,toolPen=0,burnAll=false;
+  if(sk==='home'&&mk==='fry'&&R()<.4){add('滾油彈到手，痛到彈起','bad',0);healthHit+=5;}
+  if(sk==='dpd'&&(mk==='stir'||mk==='fry')&&heat>=9&&oilN>=1&&R()<.18){
+    if(hp==='wokmaster'){add('鑊邊起火！師傅順勢嚟個火焰秀，全場拍手','good',T*.4);bonus+=3;fameHit+=2;}
+    else{add('鑊邊起火！手忙腳亂撲熄咗','bad',T*.4);doneMul*=.7;healthHit+=8;}
+  }
+  if(items.length){
+    if(m.oil&&!hasOil){add('冇落油，黐晒底','bad',0);doneMul*=.75;toolPen+=.25;}
+    if(mk==='fry'&&hasOil&&oilN<2){add('油唔夠浸，炸得唔均勻','bad',0);doneMul*=.85;}
+    if(m.liq&&!hasLiq){add('冇落水，煲乾燶底','bad',T*.7);burnAll=true;toolPen+=.4;}
+  }
+  let poison=false;
+  if(items.some(i=>i.poison)){
+    if(hp==='coach'){add('教練一眼認出毒菇，幫你揀走咗','good',0);items=items.filter(i=>!i.poison);}
+    else poison=true;
+  }
+  const lv=level();
+  const tolB=(hp==='nerd'||hp==='sous'?.25:0)+(hp==='wokmaster'?.1:0)+.02*(lv-1);
+  const rate=heat?Math.pow(heat/5,1.25)*m.mult:0;
+  const n=items.length;
+  const ctx={raw:mk==='raw',liq:(!!m.liq&&hasLiq)||mk==='steam',order:sk==='steak'?S.order:null,sous:hp==='sous'};
+  items.forEach((it,i)=>{
+    it.ti=n>1?T*m.spread*i/(n-1):0;
+    if(!it.g.ck&&!ctx.raw){it.d=null;return}
+    if(ctx.raw&&!it.g.ck&&it.g.c!=='veg'){it.d=null;return}
+    const ex=Math.max(0,Teff-it.ti)*rate;const r=it.g.ck?ex/it.g.ck:0;it.r=r;
+    let d=doneness(it.g,r,ctx,tolB);
+    if(burnAll&&r>.5)d={k:'燶',q:0,c:'burnt'};
+    it.d=d;
+  });
+  const cooked=items.filter(i=>i.d);
+  const doneS=(cooked.length?avg(cooked.map(i=>i.d.q)):.6)*doneMul;
+  const danger=cooked.some(i=>i.d.danger);
+  const steakMiss=cooked.some(i=>i.d.miss);
+  // 次序
+  let orderG=1;
+  if(n>1){let s=0,p=0;for(let a=0;a<n;a++)for(let b=a+1;b<n;b++){p++;const df=items[a].g.st-items[b].g.st;if(df>0)s+=df>=2?1:.4;}orderG=clamp(1-2*s/p,0,1);}
+  // 食譜
+  const ids=new Set(items.map(i=>i.id));
+  const chosen=RBY[se.recipe]||null;
+  let match=null;
+  const cands=RECIPES.filter(r=>r!==chosen).sort((a,b)=>b.req.length-a.req.length);
+  if(chosen)cands.unshift(chosen);
+  for(const r of cands){if(r.m===mk&&r.req.every(x=>ids.has(x))){match=r;break}}
+  let orderS=orderG;
+  if(match){const pos={};items.forEach((it,i)=>{if(pos[it.id]==null)pos[it.id]=i});const sq=match.seq.filter(x=>pos[x]!=null);let ok=0,pp=0;
+    for(let a=0;a<sq.length;a++)for(let b=a+1;b<sq.length;b++){pp++;if(pos[sq[a]]<pos[sq[b]])ok++;}
+    orderS=.4*orderG+.6*(pp?ok/pp:1);}
+  // 味道
+  const notes=[];
+  const F={};FLK.forEach(k=>F[k]=0);items.forEach(i=>{for(const k in i.g.fl)F[k]+=i.g.fl[k]});
+  let bulk=0;items.forEach(i=>{const c=i.g.c;if(BULK.includes(c))bulk+=1;else if(i.id==='water'||i.id==='stock')bulk+=.5;else if(c==='liq')bulk+=.3;});
+  const D={};FLK.forEach(k=>D[k]=bulk?F[k]/bulk:F[k]);
+  let flS;const sweet=!!(match&&match.sweet);
+  if(!bulk){flS=.15;if(n)notes.push('冇主料，淨係食調味');}
+  else{
+    const key=sweet?'t':'s',lo=sweet?.6:.35,hi=sweet?2.4:1.5,v=D[key];let base;
+    if(v<lo){base=1-(lo-v)/lo*.85;notes.push(sweet?'唔夠甜':'淡口');}
+    else if(v>hi){base=Math.max(0,1-(v-hi)/hi*1.3);notes.push(sweet?'甜到漏':'鹹到痺');}
+    else base=1;
+    if(hp==='mum'&&base<1)base=1-(1-base)/2;
+    let f=base*.72+Math.min(1,D.u)*.14+Math.min(1,D.x)*.14;
+    if(!sweet&&D.t>1.4){f-=.15;notes.push('偏甜');}
+    if(D.a>1.1){f-=.12;notes.push('好酸');}
+    if(D.h>1.6){f-=.12;notes.push('辣到噴火');}
+    if(D.f>2){f-=.12;notes.push('好油膩');}
+    if(D.u>=.8)notes.push('夠鮮');
+    if(D.x>=.9)notes.push('好香');
+    flS=clamp(f,0,1);
+  }
+  // 配搭
+  let comboS;
+  if(match){
+    const oh=match.opt.filter(x=>ids.has(x)).length;
+    comboS=match.opt.length?Math.min(1,.65+.35*Math.min(1,oh/Math.min(3,match.opt.length))):1;
+    const extra=[...ids].filter(x=>!match.req.includes(x)&&!match.opt.includes(x)&&!['oil','salt','sugar','water'].includes(x)).length;
+    if(extra>2){comboS-=.05*(extra-2);notes.push('加咗唔少私人創作');}
+  }else{
+    const cats=new Set(items.map(i=>i.g.c));
+    let c=.25;if(cats.has('meat')||cats.has('sea')||cats.has('egg'))c+=.25;if(cats.has('veg'))c+=.15;if(cats.has('aro'))c+=.1;if(cats.has('starch'))c+=.05;
+    let pr=0;PAIRS.forEach(([a,b])=>{if(ids.has(a)&&ids.has(b))pr++});c+=Math.min(.25,pr*.1);
+    if(pr)notes.push('配搭合拍');
+    let cl=0;CLASH.forEach(([a,b])=>{if(ids.has(a)&&ids.has(b))cl++});
+    if(cl){c-=.2*cl;notes.push('撞味');}
+    if(ids.size>9){c-=.05*(ids.size-9);notes.push('大雜燴');}
+    comboS=clamp(c,.05,.85);
+    if(chosen){const miss=chosen.req.filter(x=>!ids.has(x)).map(x=>ING[x].n);
+      if(miss.length)notes.push('未夠料煮「'+chosen.n+'」：欠'+miss.join('、'));
+      else if(chosen.m!==mk)notes.push('「'+chosen.n+'」要用'+METH[chosen.m].n);}
+  }
+  // 廚具
+  const fit=w.fit[mk]||0;let toolS=fit;
+  if(match){if(!match.w.includes(wk))toolS*=.9;if(mk!=='raw'&&Math.abs(heat-match.h)>2){toolS-=.15;notes.push('火候同食譜差好遠');}}
+  toolS=clamp(toolS-toolPen,0,1);
+  if(fit<.3&&n)add(`用${w.n}嚟${m.n}，有啲勉強`,'bad',0);
+  // 食材品質
+  const qi=items.filter(i=>i.g.c!=='sau');
+  const avgQ=qi.length?avg(qi.map(i=>i.q)):1;
+  const qualS=clamp((avgQ-.6)/.65,0,1);
+  // 加減分
+  const firstSolid=items.find(i=>i.g.c!=='oil');
+  if((mk==='stir'||mk==='pan')&&hasOil&&firstSolid&&firstSolid.g.c==='aro'){bonus+=3;add('先爆香，香氣四溢','good',firstSolid.ti);}
+  if(mk==='stir'&&wk==='wok'&&heat>=8&&n){const b=hp==='wokmaster'?8:5;bonus+=b;add('猛火快炒，鑊氣十足','good',T*.6);}
+  if(lv>1)bonus+=Math.min(8,lv-1);
+  if(hp==='bro')bonus+=2;
+  if(hp==='auntie'&&match){bonus+=6;add('王太傳授秘方','good',T*.5);}
+  if(hp==='barista')bonus+=2;
+  if(hp==='chef'){bonus+=8;add('主廚親自擺盤','good',T);}
+  if(hp==='somm'&&(ids.has('redwine')||ids.has('whitewine'))){bonus+=3;add('侍酒師揀咗支啱嘅酒入饌','good',T*.5);}
+  if(sk==='cha'&&mk!=='raw'&&n){const te=T*(hp==='sister'?.7:1);if(te<=m.t[2]){bonus+=4;add('快靚正，出餐神速','good',T);}else if(te>m.t[2]*2){bonus-=6;add('客人等到嬲','bad',T);}}
+  if(sk==='french'&&hp!=='chef'&&n){bonus-=5;add('冇主廚睇住，擺盤求其','bad',T);}
+  if(mk==='grill'&&wk==='campfire'&&n){bonus+=3;add('炭火香','good',T*.5);}
+  if(hp==='roomie'&&R()<.3){bonus-=6;add('阿B 趁你唔覺意食咗一大啖','bad',T);}
+  const ow=m.ow;
+  const W={done:30+7.5*(1-ow),order:15*ow,flavor:20+7.5*(1-ow),combo:15,tool:10,qual:10};
+  let score=doneS*W.done+orderS*W.order+flS*W.flavor+comboS*W.combo+toolS*W.tool+qualS*W.qual+bonus;
+  score=Math.round(clamp(score,0,100));
+  if(!bulk)score=Math.min(score,20);
+  if(!n)score=0;
+  const gr=GRADES.find(g=>score>=g[0]);
+  // 名
+  const burnt=cooked.filter(i=>i.d.c==='burnt').length,rawN=cooked.filter(i=>i.d.c==='raw').length;
+  let name=match?match.n:nameDish(items,mk);
+  if(cooked.length&&burnt/cooked.length>.5)name='焦炭'+name;
+  else if(cooked.length&&rawN/cooked.length>.5&&mk!=='raw')name='半生熟'+name;
+  if(gr[1]==='E'&&match)name='失敗嘅'+match.n;
+  const cost=S.pot.reduce((a,p)=>a+p.price,0);
+  const group=gr[1]==='S'||gr[1]==='A'?'good':gr[1]==='B'||gr[1]==='C'?'mid':'bad';
+  let comment=pick(sc.cm[group]).replace('{d}',name);
+  if(sk==='steak'&&steakMiss&&rand)comment=`客人：「我要${S.order}熟，呢塊唔係喎。」`;
+  return{score,grade:gr[1],gname:gr[2],gcol:gr[3],name,match,items,events:ev,notes,cost,danger,poison,confiscated,healthHit,fameHit,T,Teff,heat,
+    comps:{done:doneS,order:orderS,flavor:flS,combo:comboS,tool:toolS,qual:qualS},W,D,bulk,comment,ware:w.n,method:m.n};
+}
+const SHORT={rice:'飯',noodle:'麵',hofun:'河',ricenoodle:'米粉',spaghetti:'意粉',macaroni:'通粉'};
+function nameDish(items,mk){
+  if(!items.length)return'空氣';
+  const qty={};items.forEach(i=>qty[i.id]=(qty[i.id]||0)+1);
+  const uniq=[];items.forEach(i=>{if(!uniq.find(u=>u.id===i.id))uniq.push(i)});
+  const by=c=>uniq.filter(i=>c.includes(i.g.c)).sort((a,b)=>qty[b.id]-qty[a.id]);
+  const prot=by(['meat','sea']),eggs=by(['egg']),vegs=by(['veg']),starch=by(['starch']);
+  const solids=prot.concat(eggs,vegs,starch);
+  if(!solids.length){const l=uniq.find(i=>i.g.c==='liq');return l?'清'+l.g.n:uniq[0].g.n+'汁';}
+  const tagI=uniq.find(i=>i.g.tag&&i.g.c==='sau')||uniq.find(i=>i.g.tag&&i.g.c==='liq')||uniq.find(i=>i.g.tag);
+  const tag=tagI?tagI.g.tag:'';
+  const sI=starch.find(i=>SHORT[i.id]);
+  const main=prot[0]||eggs[0]||vegs[0]||starch[0];
+  const second=solids.find(i=>i!==main&&i!==sI&&i.g.c!=='meat'&&i.g.c!=='sea')||solids.find(i=>i!==main&&i!==sI);
+  if(sI&&main!==sI&&(mk==='stir'||mk==='boil'||mk==='bake')){
+    if(mk==='stir')return`${tag}${main.g.n}炒${SHORT[sI.id]}`;
+    if(mk==='boil')return`${tag}${main.g.n}${sI.g.n}`;
+    return`焗${tag}${main.g.n}${SHORT[sI.id]}`;
+  }
+  const mn=main.g.n,sn=second?second.g.n:'';
+  switch(mk){
+    case'stir':return sn?`${sn}炒${mn}`:`${tag||'清'}炒${mn}`;
+    case'pan':return`${tag||'香'}煎${mn}`;
+    case'fry':return`${tag||'酥'}炸${mn}`;
+    case'boil':return items.some(i=>i.id==='water'||i.id==='stock')&&!tag?`${mn}${sn}湯`:`${tag||'清'}煮${mn}`;
+    case'braise':return sn?`${sn}炆${mn}`:`${tag||'紅'}炆${mn}`;
+    case'steam':return`${tag||'清'}蒸${mn}`;
+    case'bake':return`${tag}焗${mn}`;
+    case'grill':return`${tag||'炭'}燒${mn}`;
+    default:return`涼拌${mn}`;
+  }
+}
+
+/* ================= 介面 ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function stamp(g){return`<span class="stamp c-${g.c}" aria-hidden="true">${g.ch||g.n[0]}</span>`}
+function fmtT(t){if(t>=60){const h=Math.floor(t/60),mm=Math.round(t%60);return h+' 小時'+(mm?' '+mm+' 分':'');}return(+t.toFixed(1))+' 分鐘'}
+function clock(t){const s=Math.round(t*60);if(t>=60)return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+'h';return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+let toastTimer;
+function toast(t){const el=$('#toast');el.textContent=t;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,2600)}
+
+function renderStats(){
+  const L=level(),lo=L>1?lvNeed(L-1):0,hi=lvNeed(L),pct=clamp((S.exp-lo)/(hi-lo)*100,0,100);
+  $('#stats').innerHTML=`
+  <div class="stat"><span class="k">第 ${S.day} 日</span><span class="v">${MEALS[S.meal]}</span></div>
+  <div class="stat"><span class="k">錢包</span><span class="v num">$${Math.round(S.money).toLocaleString('en')}</span></div>
+  <div class="stat"><span class="k">名聲</span><span class="v num">${S.fame}</span></div>
+  <div class="stat"><span class="k">廚藝</span><span class="v">Lv${L}</span><span class="bar" title="${S.exp}/${hi}"><i style="width:${pct}%"></i></span></div>
+  <div class="stat"><span class="k">健康</span><span class="v num">${S.health}</span><span class="bar hp${S.health<35?' low':''}"><i style="width:${S.health}%"></i></span></div>`;
+}
+function renderScenes(){
+  $('#scenes').innerHTML=SKEYS.map(k=>`<button class="scene-tab" data-act="scene" data-v="${k}" aria-pressed="${k===S.scene}" style="--sc:${SCOL[k]}"><span class="dot"></span>${SC[k].n}</button>`).join('');
+}
+function renderBanner(){
+  const sc=SC[S.scene];
+  let note=sc.note;
+  if(S.scene==='steak')note=`今餐客人要：<b>${S.order}熟</b>。`+note;
+  $('#banner').innerHTML=`<h1>${sc.n}</h1><div><p class="tag">${sc.tag}</p><p class="note">${note}</p></div>
+  <details class="howto"><summary>點玩？</summary><ol>
+  <li>喺「灶台」揀食譜（或者自由發揮）、幫手、煮法、廚具、火候同時間。</li>
+  <li>喺「食材」撳嘢落鑊。落鑊次序好重要：越早落煮得越耐，油同香料通常要先落，調味靠後。</li>
+  <li>每樣食材旁邊會即時顯示預計熟度，下面有味道分佈同預計分數（唔計意外）。</li>
+  <li>撳「開煮」，睇下煮成點：可以自己食、${sc.serve}、影相打卡，或者倒咗佢。</li>
+  <li>錢唔夠就去打工。食生嘢或者毒菇會病，健康歸零要入院。</li></ol></details>`;
+}
+function renderSetup(){
+  const sk=S.scene,sc=SC[sk],se=sel(),cap=wareCap(sk,se.ware),w=WARE[se.ware];
+  const recs=RECIPES.filter(r=>r.s===sk);
+  const r=RBY[se.recipe];
+  const ids=new Set(S.pot.map(p=>p.id));
+  let rc='';
+  if(r){
+    const best=S.codex[r.n];
+    rc=`<div class="rcard"><div><b>${r.n}</b> <span class="meta">· ${METH[r.m].n} · ${r.w.filter(x=>sc.wares.includes(x)).map(x=>WARE[x].n).join('／')||WARE[r.w[0]].n}${r.m!=='raw'?' · 火候 '+r.h+' · '+fmtT(r.t):''}</span></div>
+    <div class="req">${r.req.map(x=>`<span class="${ids.has(x)?'have':''}">${ING[x].n}</span>`).join('')}</div>
+    <div>${r.hint}</div>
+    ${r.opt.length?`<div class="meta">可以加：${r.opt.map(x=>ING[x].n).join('、')}</div>`:''}
+    <div class="meta">${best?'最佳紀錄：'+best.g+'（'+best.s+' 分）':'未煮過'}</div>
+    <button class="btn" data-act="follow">跟食譜設定</button></div>`;
+  }
+  const mchips=MKEYS.map(k=>`<button class="chip" data-act="method" data-v="${k}" aria-pressed="${se.method===k}" ${methodOK(sk,k)?'':'disabled'}>${METH[k].n}</button>`).join('');
+  const wchips=sc.wares.map(k=>{const f=WARE[k].fit[se.method]||0;const dots=f>=.95?'●●●':f>=.6?'●●':f>=.3?'●':'×';
+    return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}">${WARE[k].n}<span class="fit" title="適合程度">${dots}</span></button>`}).join('');
+  const hchips=[''].concat(sc.helpers).map(k=>{const h=k?HELP[k]:{n:'自己搞掂',d:'唔使人幫'};return`<button class="helper" data-act="helper" data-v="${k}" aria-pressed="${se.helper===k}"><b>${h.n}</b><span>${h.d}</span></button>`}).join('');
+  const m=METH[se.method],raw=se.method==='raw',fixed=w.fixed;
+  const step=m.t[1]<=25?.5:m.t[1]<=60?1:5;
+  $('#setup').innerHTML=`<h2>灶台 <small>${sc.n}</small></h2><div class="fields">
+  <div class="field"><label class="lab" for="selRecipe">食譜</label><select id="selRecipe"><option value="">自由發揮</option>${recs.map(x=>`<option value="${x.id}" ${se.recipe===x.id?'selected':''}>${x.n}${S.codex[x.n]?'　'+S.codex[x.n].g:''}</option>`).join('')}</select>${rc}</div>
+  <div class="field"><span class="lab">幫手</span><div class="helpers">${hchips}</div></div>
+  <div class="field"><span class="lab">煮法</span><div class="chips">${mchips}</div></div>
+  <div class="field"><span class="lab">廚具 <span>● 適合程度</span></span><div class="chips">${wchips}</div></div>
+  <div class="field"><label class="lab" for="heat">火候 <b id="heatV">${raw?'唔使開火':fixed?fixed+'（固定）':se.heat+' / '+cap}</b></label>
+    <input type="range" id="heat" min="1" max="${Math.max(1,cap)}" step="1" value="${fixed||se.heat}" ${raw||fixed?'disabled':''}>
+    <div class="flames" id="flames">${flames(raw?0:(fixed||se.heat))}</div></div>
+  <div class="field"><label class="lab" for="time">時間 <b id="timeV">${raw?'—':fmtT(se.time)}</b></label>
+    <input type="range" id="time" min="${m.t[0]}" max="${m.t[1]||1}" step="${step}" value="${se.time}" ${raw?'disabled':''}></div>
+  </div>`;
+}
+function flames(h){let s='';for(let i=1;i<=9;i++)s+=`<i class="${i<=h?'on':''}" style="height:${20+i*9}%"></i>`;return s}
+function renderPantry(){
+  const sk=S.scene,sc=SC[sk];
+  let sid=S.src[sk];if(!sc.src.find(s=>s.id===sid))sid=S.src[sk]=sc.src[0].id;
+  const src=sc.src.find(s=>s.id===sid);
+  let list;
+  if(src.stock){const st=S.stock[sk+'.'+src.id]||{};list=Object.keys(st).map(id=>({id,stock:st[id]}));}
+  else if(src.wild)list=Object.keys(src.chance).map(id=>({id,chance:src.chance[id]}));
+  else list=src.items.map(id=>({id}));
+  const html=list.map(o=>{const g=ING[o.id];let pr;
+    if(src.stock)pr=`剩 ${o.stock}`;else if(src.wild)pr=o.chance>=1?'免費':`成功率 ${Math.round(clamp(o.chance+(sel().helper==='coach'?.2:0),0,1)*100)}%`;
+    else pr=g.p?'$'+Math.max(1,Math.round(g.p*src.mul)):'免費';
+    return`<button class="item" data-act="add" data-v="${o.id}" ${src.stock&&!o.stock?'disabled':''}>${stamp(g)}<span class="t"><span class="nm">${g.n}</span><span class="pr">${pr}</span></span></button>`}).join('');
+  $('#pantry').innerHTML=`<h2>食材 <small>撳一下落鑊</small></h2>
+  <div class="src-tabs">${sc.src.map(s=>`<button class="src-tab" data-act="src" data-v="${s.id}" aria-pressed="${s.id===sid}">${s.n}</button>`).join('')}</div>
+  <p class="src-desc">${src.d||'&nbsp;'}</p>
+  <div class="items">${html||'<div class="empty">今日冇貨喇</div>'}</div>
+  <div class="legend">${Object.keys(CATN).map(c=>`<span><i class="c-${c}"></i>${CATN[c]}</span>`).join('')}</div>`;
+}
+function renderPot(){
+  const se=sel(),res=evaluate(false);PREV=res;
+  const rows=S.pot.map((p,i)=>{const g=ING[p.id],it=res.items[i];const d=it&&it.d;
+    const b=d?`<span class="badge b-${d.c}">${d.k}</span>`:`<span class="badge b-none">—</span>`;
+    return`<li class="prow"><span class="idx">${i+1}</span>${stamp(g)}<span class="nm">${g.n}<small>${p.srcn}${p.price?' · $'+p.price:''}</small></span>${b}
+    <span class="mv"><button class="mini" data-act="up" data-v="${i}" aria-label="上移" ${i?'':'disabled'}>↑</button><button class="mini" data-act="dn" data-v="${i}" aria-label="下移" ${i<S.pot.length-1?'':'disabled'}>↓</button><button class="mini" data-act="rm" data-v="${i}" aria-label="移除">✕</button></span></li>`}).join('');
+  const D=res.D,sweet=res.match&&res.match.sweet;
+  const tubes=FLK.map(k=>{const v=res.bulk?D[k]:0;const h=clamp(v/2.4*100,0,100);
+    let ideal='';if(k==='s'&&!sweet)ideal=`<span class="ideal" style="bottom:${.35/2.4*100}%;height:${(1.5-.35)/2.4*100}%"></span>`;
+    if(k==='t'&&sweet)ideal=`<span class="ideal" style="bottom:${.6/2.4*100}%;height:${(2.4-.6)/2.4*100}%"></span>`;
+    return`<div class="fl"><div class="tube">${ideal}<i style="height:${h}%"></i></div>${FLN[k]}</div>`}).join('');
+  const hints=res.notes.map(t=>`<li class="${/淡|鹹到|甜到|酸|噴火|油膩|撞|欠|要用|差|雜/.test(t)?'bad':/鮮|香|合拍/.test(t)?'good':''}">${esc(t)}</li>`)
+    .concat(res.events.map(e=>`<li class="${e.k}">${esc(e.t)}</li>`)).join('');
+  const afford=S.money>=res.cost;
+  $('#pot').innerHTML=`<h2>${WARE[se.ware].n} <small>${METH[se.method].n}${se.method!=='raw'?' · 火候 '+res.heat+' · '+fmtT(se.time):''}</small></h2>
+  <div class="potmeta"><span>落鑊次序 <b>${S.pot.length}</b>/14</span><span>食材成本 <b class="num">$${res.cost}</b></span></div>
+  ${S.pot.length?`<ol class="potlist">${rows}</ol>`:`<div class="empty">鑊仲係空嘅。<br>喺食材度撳嘢落鑊，次序就係落鑊次序。</div>`}
+  <div class="flavor" aria-label="味道分佈">${tubes}</div>
+  ${hints?`<ul class="hints">${hints}</ul>`:''}
+  <div class="predict"><span class="p">預計（唔計意外）<br><b>${S.pot.length?res.grade+' '+res.gname+' · '+res.score+' 分':'—'}</b></span>
+  <span style="display:flex;gap:6px"><button class="btn" data-act="clear" ${S.pot.length?'':'disabled'}>清空</button>
+  <button class="btn pri cookbtn" data-act="cook" ${S.pot.length&&afford?'':'disabled'}>開煮</button></span></div>
+  ${!afford?`<p class="src-desc" style="margin:8px 0 0;color:var(--c-meat)">唔夠錢買食材，去打工先啦。</p>`:''}`;
+}
+function renderAll(){
+  document.body.dataset.scene=S.scene;
+  renderStats();renderScenes();renderBanner();renderSetup();renderPantry();renderPot();
+}
+
+/* ================= 動作 ================= */
+function addItem(id){
+  if(S.pot.length>=14){toast('個鑊滿晒喇');return}
+  const sk=S.scene,src=SC[sk].src.find(s=>s.id===S.src[sk]);const g=ING[id];
+  const item={id,src:src.id,srcn:src.n,price:g.p?Math.max(1,Math.round(g.p*src.mul)):0,q:src.q};
+  if(src.stock){const st=S.stock[sk+'.'+src.id];if(!st[id])return;st[id]--;item.lim=1;}
+  if(src.wild){
+    const c=src.chance[id];
+    if(c<1){
+      if(S.health<=2){toast('冇力喇，休息下先');return}
+      S.health-=2;
+      const p=clamp(c+(sel().helper==='coach'?.2:0),0,1);
+      if(Math.random()>=p){toast({streamfish:'條魚游走咗',rabbit:'陷阱空空如也',wildmush:'搵唔到菇'}[id]||'搵唔到');save();renderStats();return}
+      item.lim=1;
+      if(id==='wildmush'&&Math.random()<.3)item.poison=1;
+      if(sel().helper==='dog'&&Math.random()<.3&&S.pot.length<13){S.pot.push(Object.assign({},item));toast('狗仔幫你多搵咗一份'+g.n);}
+    }
+  }
+  S.pot.push(item);save();renderSetup();renderPantry();renderPot();renderStats();
+}
+function removeItem(i){
+  const p=S.pot[i];if(!p)return;
+  if(p.lim&&!SC[S.scene].src.find(s=>s.id===p.src).wild){const st=S.stock[S.scene+'.'+p.src];if(st)st[p.id]=(st[p.id]||0)+1;}
+  S.pot.splice(i,1);save();renderSetup();renderPantry();renderPot();
+}
+function clearPot(){for(let i=S.pot.length-1;i>=0;i--){const p=S.pot[i];if(p.lim&&!SC[S.scene].src.find(s=>s.id===p.src).wild){const st=S.stock[S.scene+'.'+p.src];if(st)st[p.id]=(st[p.id]||0)+1;}}S.pot=[];save();renderSetup();renderPantry();renderPot()}
+function setMethod(k){const se=sel();se.method=k;if((WARE[se.ware].fit[k]||0)<.3)se.ware=bestWare(S.scene,k);const m=METH[k];se.time=m.t[2];se.heat=Math.min(m.h||1,wareCap(S.scene,se.ware))||1;}
+function follow(){const se=sel(),r=RBY[se.recipe];if(!r)return;se.method=r.m;const w=r.w.find(x=>SC[S.scene].wares.includes(x));se.ware=w||bestWare(S.scene,r.m);
+  if(r.m!=='raw'){se.heat=Math.min(r.h,wareCap(S.scene,se.ware));se.time=r.t;}save();renderSetup();renderPot();}
+function switchScene(k){if(k===S.scene)return;clearPot();S.scene=k;save();renderAll();window.scrollTo({top:0,behavior:'smooth'})}
+function newDay(){S.day++;S.meal=0;S.health=clamp(S.health+8,0,100);restock();S.order=pick(ORDERS);}
+function nextMeal(){S.meal++;if(S.meal>2)newDay();else S.order=pick(ORDERS);}
+function checkHealth(msgs){if(S.health<=0){const fee=Math.min(S.money,400);S.money-=fee;S.health=60;S.day+=3;restock();msgs.push(`你暈低咗，入院三日，醫藥費 $${fee}。`);}}
+function work(){
+  if(S.health<15){toast('太攰喇，食番啲好嘢補下身先');return}
+  const L=level(),pay=220+L*60+Math.min(200,S.fame*2);S.money+=pay;S.health=clamp(S.health-12,0,100);newDay();save();renderAll();toast(`打咗一日工，賺到 $${pay}`);
+}
+
+/* ---- 開煮 ---- */
+let animTimer=null;
+function cook(){
+  if(!S.pot.length)return;
+  const res=evaluate(true);
+  if(S.money<res.cost){toast('唔夠錢');return}
+  S.money-=res.cost;
+  CUR=res;CUR.photo=false;
+  S.health=clamp(S.health-res.healthHit,0,100);S.fame+=res.fameHit;
+  const sk=S.scene;S.pot=S.pot.filter(p=>!p.lim);
+  const srcRisk=res.items.some(i=>i.src==='share');
+  if(sk==='dorm'&&srcRisk&&Math.random()<.25){res.events.push({t:'宿友發現你「借用」咗佢啲嘢，喺群組度出你名',k:'bad',tm:res.T});S.fame-=4;}
+  save();
+  showCooking(res);
+}
+function timeline(res){
+  const L=[];const verb={oil:'落{n}，熱{w}',aro:'落{n}，「嗞——」爆香',meat:'落{n}，滋滋聲',sea:'落{n}',egg:'落{n}',veg:'落{n}，兜勻',starch:'落{n}',liq:'注入{n}',sau:'加{n}'};
+  res.items.forEach(it=>L.push({tm:it.ti||0,t:(verb[it.g.c]||'落{n}').replace('{n}',it.g.n).replace('{w}',res.ware),k:''}));
+  res.events.forEach(e=>L.push({tm:e.tm==null?res.T*.5:e.tm,t:e.t,k:e.k}));
+  L.sort((a,b)=>a.tm-b.tm);
+  L.push({tm:res.Teff,t:res.confiscated?'……':(res.method==='涼拌'?'拌勻上碟':'熄火，上碟'),k:''});
+  return L;
+}
+function showCooking(res){
+  const L=timeline(res);
+  openSheet(`<div class="cooking"><div class="potart">${wokSVG()}<div><h3 style="margin:0">${res.method}緊……</h3><div class="src-desc" style="margin:0">${res.ware} · ${res.method==='涼拌'?'唔使開火':'火候 '+res.heat+' · '+fmtT(res.T)}</div></div></div>
+  <div class="prog"><i id="prog"></i></div><ol class="tl" id="tl"></ol>
+  <div class="res-acts"><button class="btn" data-act="skip">跳過</button></div></div>`);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let i=0;const tl=$('#tl'),pg=$('#prog');
+  const step=()=>{if(i>=L.length){clearInterval(animTimer);animTimer=setTimeout(()=>showResult(res),reduce?0:450);return}
+    const l=L[i];tl.insertAdjacentHTML('beforeend',`<li class="${l.k}"><time>${res.method==='涼拌'?'—':clock(l.tm)}</time><span>${esc(l.t)}</span></li>`);i++;pg.style.width=(i/L.length*100)+'%';};
+  clearInterval(animTimer);
+  if(reduce){while(i<L.length)step();step();}else animTimer=setInterval(step,380);
+}
+function wokSVG(){return`<svg class="wokart" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 50c6 7 30 7 36 0" fill="none" stroke="var(--flame)" stroke-width="3" stroke-linecap="round"><animate attributeName="opacity" values="1;.4;1" dur=".8s" repeatCount="indefinite"/></path><path d="M6 28h52c0 13-11 20-26 20S6 41 6 28z" fill="var(--ink)"/><path d="M58 30l5-2" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/><ellipse cx="32" cy="28" rx="20" ry="4" fill="var(--acc)"/><circle cx="25" cy="22" r="2" fill="var(--muted)"><animate attributeName="cy" values="24;14;24" dur="1.4s" repeatCount="indefinite"/></circle><circle cx="38" cy="20" r="1.6" fill="var(--muted)"><animate attributeName="cy" values="24;12;24" dur="1.1s" repeatCount="indefinite"/></circle></svg>`}
+function showResult(res){
+  clearInterval(animTimer);
+  const sc=SC[S.scene];
+  if(res.confiscated){
+    openSheet(`<div class="res-head"><div class="grade" style="--gc:var(--c-meat)">沒</div><div><h3>俾舍監沒收咗</h3><div class="sub">宿舍禁明火、禁炸嘢，名聲 −5</div></div></div>
+    <div class="quote">舍監：「再有下次就寫信俾你屋企。」</div><div class="res-acts"><button class="btn pri" data-act="toss">唉……</button></div>`);return;
+  }
+  const W=res.W,c=res.comps;
+  const rows=[['熟度',c.done,W.done],['次序',c.order,W.order],['調味',c.flavor,W.flavor],['配搭',c.combo,W.combo],['廚具',c.tool,W.tool],['食材',c.qual,W.qual]]
+    .map(([l,v,w])=>`<span>${l}</span><span class="bar"><i style="width:${clamp(v,0,1)*100}%"></i></span><span class="val num">${Math.round(v*w)}/${Math.round(w)}</span>`).join('');
+  const dchips=res.items.filter(i=>i.d).map(i=>`<span class="dchip">${stamp(i.g)}${i.g.n}<span class="badge b-${i.d.c}">${i.d.k}</span></span>`).join('');
+  const evs=res.events.map(e=>`<li class="${e.k}">${esc(e.t)}</li>`).join('');
+  const isNew=!S.codex[res.name];
+  const sv=serveValue(res);
+  openSheet(`<div class="res-head"><div class="grade" style="--gc:${res.gcol}">${res.grade}</div><div>
+    <h3>${esc(res.name)}</h3><div class="sub">${res.gname} · <span class="num">${res.score}</span> 分${res.match?' · 食譜「'+res.match.n+'」':' · 自創料理'}${isNew?' · 新發現':''}</div></div></div>
+  <div class="bd">${rows}</div>
+  ${dchips?`<div class="chiprow">${dchips}</div>`:''}
+  ${evs?`<ul class="evs">${evs}</ul>`:''}
+  ${res.notes.length?`<ul class="hints">${res.notes.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}
+  <div class="quote">${esc(res.comment)}</div>
+  <div class="res-acts">
+   <button class="btn" data-act="eat">自己食<small>${res.grade==='S'||res.grade==='A'?'補身':res.grade==='E'?'有排肚痛':'頂肚'}</small></button>
+   <button class="btn pri" data-act="serve">${sc.serve}<small>${sv}</small></button>
+   <button class="btn" data-act="photo" id="btnPhoto">影相打卡<small>賺名聲</small></button>
+   <button class="btn" data-act="toss">倒咗佢<small>當冇煮過</small></button>
+  </div>`);
+}
+function serveValue(res){
+  const sk=S.scene,sc=SC[sk],gm={S:2,A:1.5,B:1.1,C:.8,D:.4,E:0}[res.grade];
+  if(sk==='home')return'名聲 '+sgn({S:4,A:3,B:2,C:1,D:0,E:-2}[res.grade]);
+  if(sk==='wild')return'健康 '+sgn({S:12,A:9,B:6,C:3,D:0,E:-5}[res.grade]+(sel().helper==='hiker'?5:0));
+  return'約 $'+salePrice(res);
+}
+function sgn(n){return(n>0?'+':'')+n}
+function salePrice(res){
+  const sc=SC[S.scene],hp=sel().helper,gm={S:2,A:1.5,B:1.1,C:.8,D:.4,E:0}[res.grade];
+  let base=res.match&&res.match.p?Math.max(res.match.p,res.cost*sc.sell):res.cost*sc.sell+10;
+  let p=base*gm*(hp==='waiter'?1.25:1)*(hp==='boss'?1.1:1)*(hp==='somm'?1.4:1);
+  if(hp==='barista'&&gm>0)p+=15;
+  return Math.round(p);
+}
+function resolve(kind){
+  const res=CUR;if(!res)return;
+  const msgs=[];const sk=S.scene,hp=sel().helper;
+  if(kind==='photo'){
+    if(res.photo)return;res.photo=true;
+    const f={S:5,A:3,B:1,C:0,D:1,E:4}[res.grade]*(hp==='roomie'?2:1);S.fame+=f;
+    const likes={S:'九百幾',A:'三百幾',B:'幾十',C:'兩三',D:'幾十個「哈哈」',E:'一千幾個「嬲嬲」，爆紅'}[res.grade];
+    toast(`打卡收到 ${likes}${res.grade==='D'||res.grade==='E'?'':'個讚'}，名聲 ${sgn(f)}`);
+    const b=$('#btnPhoto');if(b)b.disabled=true;save();renderStats();return;
+  }
+  if(kind==='eat'){
+    let h={S:15,A:10,B:5,C:0,D:-5,E:-15}[res.grade];
+    if(res.danger&&Math.random()<.55){h-=20;S.day++;restock();msgs.push('食咗未熟嘅嘢，肚痛到成日喺廁所，浪費咗一日。');}
+    if(res.poison){h-=35;const fee=Math.min(S.money,150);S.money-=fee;S.day+=2;restock();msgs.push(`食咗毒菇，睇見滿天小人，睇醫生使咗 $${fee}，休息兩日。`);}
+    S.health=clamp(S.health+h,0,100);
+    if(!msgs.length)msgs.push(h>0?`食得好滿足，健康 ${sgn(h)}`:h<0?`食完唔係幾舒服，健康 ${h}`:'食飽咗。');
+  }
+  if(kind==='serve'){
+    if(sk==='home'){const f={S:4,A:3,B:2,C:1,D:0,E:-2}[res.grade]+(hp==='auntie'?1:0);S.fame+=f;msgs.push(`屋企人食晒，名聲 ${sgn(f)}`);}
+    else if(sk==='wild'){const h={S:12,A:9,B:6,C:3,D:0,E:-5}[res.grade]+(hp==='hiker'?5:0);S.health=clamp(S.health+h,0,100);const f={S:3,A:2,B:1,C:0,D:0,E:-1}[res.grade];S.fame+=f;
+      if(res.poison){S.fame-=6;msgs.push('隊友食完中毒，要召直升機……名聲 −6');}else msgs.push(`同隊友分享，健康 ${sgn(h)}，名聲 ${sgn(f)}`);}
+    else{const p=salePrice(res);S.money+=p;let f={S:5,A:3,B:1,C:0,D:-2,E:-4}[res.grade]+(hp==='boss'?2:0);
+      if(hp==='chef'&&res.score<70){f-=3;msgs.push('主廚當眾鬧咗你十分鐘。');}
+      if(res.danger&&Math.random()<.4){f-=5;msgs.push('有客人食完肚痛，上網留咗負評。');}
+      S.fame+=f;msgs.push(`收到 $${p}，名聲 ${sgn(f)}`);}
+  }
+  if(kind==='toss')msgs.push(res.confiscated?'冇得食，今餐捱餓。':'倒咗落垃圾桶。');
+  // 記錄
+  if(!res.confiscated){
+    const c=S.codex[res.name];
+    if(!c||res.score>c.s)S.codex[res.name]={s:res.score,g:res.grade,sc:S.scene,r:res.match?res.match.id:'',n:(c?c.n:0)+1};else c.n++;
+  }
+  const L0=level();S.exp+=res.confiscated?2:Math.round(res.score/6)+(res.match?3:0);const L1=level();
+  if(L1>L0)msgs.push(`廚藝升到 Lv${L1}！`);
+  nextMeal();checkHealth(msgs);
+  CUR=null;save();closeSheet();renderAll();toast(msgs.join(' '));
+}
+function openSheet(html){$('#sheet').innerHTML=html;$('#ov').hidden=false;const b=$('#sheet .btn');if(b)b.focus({preventScroll:true});}
+function closeSheet(){$('#ov').hidden=true;$('#sheet').innerHTML='';}
+function showCodex(){
+  const secs=SKEYS.map(k=>{const rs=RECIPES.filter(r=>r.s===k);
+    const known=rs.map(r=>{const c=S.codex[r.n];return c?`<div class="cx"><span>${r.n}</span><b>${c.g}</b></div>`:`<div class="cx unk"><span>？？？</span><span>${METH[r.m].n}</span></div>`}).join('');
+    const own=Object.entries(S.codex).filter(([n,c])=>c.sc===k&&!c.r).sort((a,b)=>b[1].s-a[1].s).slice(0,8).map(([n,c])=>`<div class="cx"><span>${esc(n)}</span><b>${c.g}</b></div>`).join('');
+    return`<div class="codex-sec" style="--sc:${SCOL[k]}"><h4>${SC[k].n}</h4><div class="codex-list">${known}${own}</div></div>`}).join('');
+  const total=RECIPES.length,got=RECIPES.filter(r=>S.codex[r.n]).length,own=Object.values(S.codex).filter(c=>!c.r).length;
+  openSheet(`<h3>食譜圖鑑</h3><p class="src-desc">食譜 ${got}/${total} · 自創料理 ${own} 款。問號嘅食譜可以喺灶台嘅食譜選單度睇提示。</p>${secs}
+  <div class="res-acts"><button class="btn" data-act="close">關閉</button></div>`);
+}
+let resetArmed=false,resetTimer;
+function reset(){
+  const b=$('#btnReset');
+  if(!resetArmed){resetArmed=true;b.textContent='再撳一下確認';b.classList.add('warn');resetTimer=setTimeout(()=>{resetArmed=false;b.textContent='重新開始';b.classList.remove('warn')},3500);return}
+  clearTimeout(resetTimer);resetArmed=false;b.textContent='重新開始';b.classList.remove('warn');
+  S=newState();restock();save();renderAll();toast('重新開始，第一日');
+}
+
+function init(){
+  S=load()||newState();
+  if(!Object.keys(S.stock).length)restock();
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-act]');if(!b||b.disabled)return;
+    const a=b.dataset.act,v=b.dataset.v,se=sel();
+    switch(a){
+      case'scene':switchScene(v);break;
+      case'src':S.src[S.scene]=v;save();renderPantry();break;
+      case'add':addItem(v);break;
+      case'rm':removeItem(+v);break;
+      case'up':{const i=+v;[S.pot[i-1],S.pot[i]]=[S.pot[i],S.pot[i-1]];save();renderPot();break}
+      case'dn':{const i=+v;[S.pot[i+1],S.pot[i]]=[S.pot[i],S.pot[i+1]];save();renderPot();break}
+      case'method':setMethod(v);save();renderSetup();renderPot();break;
+      case'ware':se.ware=v;se.heat=Math.min(se.heat,wareCap(S.scene,v))||1;save();renderSetup();renderPot();break;
+      case'helper':se.helper=v;save();renderSetup();renderPantry();renderPot();break;
+      case'follow':follow();break;
+      case'clear':clearPot();break;
+      case'cook':cook();break;
+      case'skip':clearInterval(animTimer);clearTimeout(animTimer);showResult(CUR);break;
+      case'eat':case'serve':case'photo':case'toss':resolve(a);break;
+      case'work':work();break;
+      case'codex':showCodex();break;
+      case'close':closeSheet();break;
+      case'reset':reset();break;
+    }
+  });
+  document.addEventListener('change',e=>{if(e.target.id==='selRecipe'){sel().recipe=e.target.value;save();renderSetup();renderPot();}});
+  document.addEventListener('input',e=>{
+    const se=sel();
+    if(e.target.id==='heat'){se.heat=+e.target.value;$('#heatV').textContent=se.heat+' / '+wareCap(S.scene,se.ware);$('#flames').innerHTML=flames(se.heat);save();renderPot();}
+    if(e.target.id==='time'){se.time=+e.target.value;$('#timeV').textContent=fmtT(se.time);save();renderPot();}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#ov').hidden&&!CUR)closeSheet();});
+  $('#ov').addEventListener('click',e=>{if(e.target.id==='ov'&&!CUR)closeSheet();});
+  renderAll();
+}
+if(!globalThis.NODE_TEST)init();
+</script>
+</body>
+</html>
