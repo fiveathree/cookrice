@@ -609,7 +609,8 @@ const SC={
 const SKEYS=['home','dorm','cha','dpd','wild','steak','french'];
 const UNLOCK={home:[0,1],dorm:[0,1],cha:[10,2],dpd:[25,3],wild:[20,3],steak:[50,4],french:[80,5]};
 function unlocked(k){const u=UNLOCK[k];return S.fame>=u[0]&&level()>=u[1]}
-const WLV=[{n:'普通',t:0,b:0},{n:'靚料',t:.12,b:2},{n:'頂級',t:.25,b:4}];
+const WLV=[{n:'孖人牌',t:0,b:0},{n:'Le Creuset',t:.12,b:2},{n:'Mauviel 1830',t:.25,b:4}];
+function wn(w,l){const t=WLV[l-1].n;return t+(/[A-Za-z0-9]$/.test(t)?' ':'')+WARE[w].n}
 const WCOST={home:1,dorm:.8,cha:1.3,dpd:1.5,wild:1,steak:2.5,french:3};
 function wlv(w){return(S.wareLv&&S.wareLv[w])||1}
 function upCost(w){const l=wlv(w);if(l>=3)return 0;const base=Math.min(...SKEYS.filter(k=>SC[k].wares.includes(w)).map(k=>WCOST[k]));return Math.round((l===1?250:800)*base/10)*10}
@@ -850,7 +851,7 @@ function evaluate(rand){
   if(sk==='french'&&hp!=='chef'&&n){bonus-=5;add('冇主廚睇住，擺盤求其','bad',T);}
   if(mk==='grill'&&wk==='campfire'&&n){bonus+=3;add('炭火香','good',T*.5);}
   if(BO){bonus+=3;add(`${HELP[hp].n}神助攻：${HELP[hp].bd}`,'good',T*.2);}
-  if(wl>1){bonus+=WLV[wl-1].b;add(`${WLV[wl-1].n}${w.n}加持`,'good',0);}
+  if(wl>1){bonus+=WLV[wl-1].b;add(`${wn(wk,wl)}加持`,'good',0);}
   if(hp==='roomie'&&!BO&&R()<.3){bonus-=6;add('阿B 趁你唔覺意食咗一大啖','bad',T);}
   const ow=m.ow;
   const W={done:30+7.5*(1-ow),order:15*ow,flavor:20+7.5*(1-ow),combo:15,tool:10,qual:10};
@@ -1103,7 +1104,7 @@ function renderCtl(){
   const sk=S.scene,sc=SC[sk],se=sel(),w=WARE[se.ware],cap=wareCap(sk,se.ware),m=METH[se.method],raw=se.method==='raw',fixed=w.fixed;
   const step=m.t[1]<=25?.5:m.t[1]<=60?1:5;
   const wchips=sc.wares.map(k=>{const f=WARE[k].fit[se.method]||0;const dots=f>=.95?'●●●':f>=.6?'●●':f>=.3?'●':'×';
-    const l=wlv(k);return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}" title="${WLV[l-1].n}${WARE[k].n}，適合${METH[se.method].n}：${dots}">${WARE[k].n}${l>1?`<sup class="wl">${l}</sup>`:''}<span class="fit">${dots}</span></button>`}).join('')+`<button class="chip upchip" data-act="shop">升級</button>`;
+    const l=wlv(k);return`<button class="chip" data-act="ware" data-v="${k}" aria-pressed="${se.ware===k}" title="${wn(k,l)}，適合${METH[se.method].n}：${dots}">${WARE[k].n}${l>1?`<sup class="wl">${l}</sup>`:''}<span class="fit">${dots}</span></button>`}).join('')+`<button class="chip upchip" data-act="shop">升級</button>`;
   const mchips=MKEYS.filter(k=>methodOK(sk,k)).map(k=>`<button class="chip" data-act="method" data-v="${k}" aria-pressed="${se.method===k}">${METH[k].n}</button>`).join('');
   $('#stageCtl').innerHTML=`<div class="st-wares" role="group" aria-label="廚具">${wchips}</div><div class="st-meth" role="group" aria-label="煮法">${mchips}</div>
   <div class="st-heat"><label class="lab" for="heat">火候 <b id="heatV">${raw?'唔使開火':fixed?fixed+'（固定）':se.heat+' / '+cap}</b></label>
@@ -1305,13 +1306,13 @@ function resolve(kind){
 function showShop(){
   const sc=SC[S.scene];
   const rows=sc.wares.map(w=>{const l=wlv(w),c=upCost(w),nx=WLV[l];
-    return`<div class="shop-row"><div><b>${WLV[l-1].n}${WARE[w].n}</b> <span class="lvtag">Lv${l}</span><div class="src-desc" style="margin:0">${l>1?`而家：熟度容錯 +${Math.round(WLV[l-1].t*100)}%、評分 +${WLV[l-1].b}${l>=3&&WARE[w].cap?'、火力上限 +1':''}`:'未升級'}</div>
-    ${nx?`<div class="src-desc" style="margin:0">升到${nx.n}：熟度容錯 +${Math.round(nx.t*100)}%、評分 +${nx.b}${l+1>=3&&WARE[w].cap?'、火力上限 +1':''}</div>`:''}</div>
+    return`<div class="shop-row"><div><b>${wn(w,l)}</b> <span class="lvtag">Lv${l}</span><div class="src-desc" style="margin:0">${l>1?`而家：熟度容錯 +${Math.round(WLV[l-1].t*100)}%、評分 +${WLV[l-1].b}${l>=3&&WARE[w].cap?'、火力上限 +1':''}`:'未升級'}</div>
+    ${nx?`<div class="src-desc" style="margin:0">升級做 ${nx.n}：熟度容錯 +${Math.round(nx.t*100)}%、評分 +${nx.b}${l+1>=3&&WARE[w].cap?'、火力上限 +1':''}</div>`:''}</div>
     ${nx?`<button class="btn pri" data-act="buy" data-v="${w}" ${S.money>=c?'':'disabled'}>$${c}</button>`:'<span class="lvtag">已經頂級</span>'}</div>`}).join('');
   openSheet(`<h3>廚具升級</h3><p class="src-desc">錢包：<b class="num">$${Math.round(S.money).toLocaleString('en')}</b>。同一款廚具喺唔同場景共用等級。</p><div class="shop">${rows}</div>
   <div class="res-acts"><button class="btn" data-act="close">關閉</button></div>`);
 }
-function buyUp(w){const c=upCost(w);if(!c||S.money<c){toast('唔夠錢');return}S.money-=c;S.wareLv[w]=wlv(w)+1;save();renderStats();renderPot();showShop();toast(`${WARE[w].n}升到${WLV[wlv(w)-1].n}！`);}
+function buyUp(w){const c=upCost(w);if(!c||S.money<c){toast('唔夠錢');return}S.money-=c;S.wareLv[w]=wlv(w)+1;save();renderStats();renderPot();showShop();toast(`升級咗做 ${wn(w,wlv(w))}！`);}
 function openSheet(html){$('#sheet').innerHTML=html;$('#ov').hidden=false;const b=$('#sheet .btn');if(b)b.focus({preventScroll:true});}
 function closeSheet(){$('#ov').hidden=true;$('#sheet').innerHTML='';}
 function showCodex(){
