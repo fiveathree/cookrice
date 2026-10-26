@@ -124,9 +124,45 @@ input[type=range]:disabled{opacity:.4}
 .req span{border-radius:5px;padding:0 6px;background:var(--panel);border:1px solid var(--line);font-size:12px}
 .req span.have{border-color:var(--d-ok);color:var(--d-ok);font-weight:700}
 
-.src-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px}
-.src-tab{border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 11px;font-size:14px}
-.src-tab[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.src-tabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px;margin-bottom:6px}
+.src-tab{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:4px 4px 3px;font-size:13px;display:grid;gap:2px;justify-items:center;line-height:1.2}
+.src-tab svg{width:100%;max-width:96px;height:auto;aspect-ratio:5/3;border-radius:5px;display:block}
+.src-tab:hover{border-color:var(--acc)}
+.src-tab[aria-pressed="true"]{background:var(--acc-soft);border-color:var(--acc);color:var(--acc-ink);font-weight:700;box-shadow:inset 0 0 0 1px var(--acc)}
+/* 店面：上面一條帆布簷篷 */
+.store{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel2)}
+.store .awn{height:22px;background:radial-gradient(circle at 8px 14px,var(--hue) 7.5px,transparent 8px) 0 0/32px 22px repeat-x,radial-gradient(circle at 24px 14px,#fff 7.5px,transparent 8px) 0 0/32px 22px repeat-x,repeating-linear-gradient(90deg,var(--hue) 0 16px,#fff 16px 32px) 0 0/100% 14px no-repeat}
+.store .sb{padding:4px 8px 8px}
+/* 雪櫃：上格冰格，下面打開見層架 */
+.fridge{position:relative;border:3px solid #aab3b8;border-radius:16px;background:#f2f4f5;padding:0 24px 10px 8px;box-shadow:0 2px 0 #d5dadd;margin-bottom:10px}
+.fridge::before{content:"";position:absolute;bottom:-11px;left:16px;right:16px;height:8px;background:linear-gradient(90deg,#7c8488 0 20px,transparent 20px calc(100% - 20px),#7c8488 calc(100% - 20px));border-radius:0 0 3px 3px}
+.fridge::after{content:"";position:absolute;right:8px;top:44px;width:6px;height:56px;border-radius:3px;background:#9aa0a6}
+.fridge .fz{height:44px;border-bottom:3px solid #aab3b8;margin:0 -24px 8px -8px;position:relative;background:radial-gradient(circle at 26px 22px,#e04a3a 6px,transparent 6.5px),radial-gradient(circle at 52px 18px,#2c74b0 5px,transparent 5.5px)}
+.fridge .fz::before{content:"";position:absolute;left:66px;top:9px;width:30px;height:24px;background:#f6e27a;transform:rotate(-5deg);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.fridge .fz::after{content:"";position:absolute;right:8px;top:8px;width:6px;height:14px;border-radius:3px;background:#9aa0a6}
+.fr-in{position:relative;min-height:270px;border-radius:8px;padding:6px 6px 46px;background:repeating-linear-gradient(to bottom,transparent 0 50px,rgba(255,255,255,.95) 50px 53px,#a9c2cc 53px 56px),linear-gradient(#eaf7fd,#cfe7f2);box-shadow:inset 0 0 0 2px #c4d6de,inset 0 10px 18px rgba(255,255,220,.6)}
+.fr-in::after{content:"";position:absolute;left:6px;right:6px;bottom:6px;height:32px;border-radius:6px;border:2px solid #b7cbd3;background:linear-gradient(rgba(255,255,255,.75),rgba(196,228,206,.85))}
+.fr-in .items{grid-auto-rows:44px;row-gap:12px;padding-bottom:12px}
+.fr-in .item{background:color-mix(in oklab,#fff 80%,transparent);border-color:#c4d6de;color:#1d2321;height:44px}
+.fr-in .item .pr{color:#5b6764}
+.fr-in .empty{color:#5b6764;padding:14px 4px 26px}
+/* 調味架：爐下面嘅木層架，樽罐企喺度 */
+.rack{margin:0 0 10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:color-mix(in oklab,#c99a63 10%,var(--panel2))}
+.rack-h{display:flex;justify-content:space-between;align-items:baseline;padding:5px 10px 0;font-size:13px}
+.rack-h b{font-family:var(--f-disp);font-size:15px}
+.rack-h small{font-size:11px;color:var(--muted)}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));grid-auto-rows:70px;padding:2px 8px 0;background:repeating-linear-gradient(to bottom,transparent 0 52px,#b98552 52px 55px,#9a6a3c 55px 66px,#6e4626 66px 68px,transparent 68px 70px)}
+.btl{position:relative;border:0;background:none;padding:0;display:grid;grid-template-rows:52px 14px;justify-items:center;align-items:end;cursor:pointer;min-width:0}
+.btl svg{width:34px;height:46px;display:block;transform-origin:50% 100%;transition:transform .15s}
+.btl:hover svg,.btl:focus-visible svg{transform:translateY(-3px)}
+.btl .tag{font-size:10px;line-height:12px;background:#fdf8ee;color:#3a2a1a;border-radius:2px;padding:0 3px;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-bottom:1px}
+.btl .n{position:absolute;top:2px;right:2px;min-width:15px;height:15px;border-radius:8px;background:var(--acc);color:var(--on-acc);font:700 10px/15px var(--f-num);font-style:normal;text-align:center;padding:0 3px}
+.btl.pour svg{animation:pour .7s ease-in-out}
+@keyframes pour{0%{transform:none}35%,65%{transform:translateY(-10px) rotate(-62deg)}100%{transform:none}}
+.pourfx{position:absolute;left:50%;top:6%;width:0;height:56%;z-index:2;pointer-events:none}
+.pourfx i{position:absolute;top:0;width:5px;height:20px;margin-left:-2.5px;border-radius:3px;background:var(--pc);box-shadow:0 0 0 1px rgba(0,0,0,.25);opacity:0;animation:drip .55s ease-in forwards}
+.pourfx.powder i{width:5px;height:5px;border-radius:50%}
+@keyframes drip{0%{opacity:0;transform:translateY(0)}15%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translateY(var(--fall,90px))}}
 .src-desc{font-size:12px;color:var(--muted);margin:0 0 10px}
 .items{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px}
 .item{display:flex;align-items:center;gap:7px;text-align:left;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:6px 7px;min-width:0}
@@ -529,10 +565,10 @@ const SC={
   serve:'開飯，俾屋企人食',sell:0,
   note:'雪櫃剩菜免費但每日得幾樣。屋企爐頭最大火 <b>7</b>，炸嘢會油彈。',
   src:[
-   {id:'market',n:'街市',d:'新鮮靚嘢，品質 +12%',mul:1,q:1.12,items:['porkchop','ribs','mince','charsiu','wings','drum','beef','brisket','shrimp','fishfillet','grouper','squid','clams','egg','tomato','potato','carrot','radish','broccoli','cabbage','pepper','corn','shiitake','choysum','lettuce','spinach','sprouts','youmak','onion','garlic','ginger','scallion','shallot','chili','scallion2','coriander']},
-   {id:'super',n:'超市',d:'標價清楚，貴少少',mul:1.15,q:1,items:['spam','sausage','bacon','egg','cheese','milk','cream','coconut','noodle','spaghetti','macaroni','rawrice','toast','butter','mushroom','lemon','beer']},
-   {id:'fridge',n:'雪櫃',d:'琴日剩低嘅，免費但唔多，品質打個折',mul:0,q:.85,stock:1,pool:['rice','rice','egg','spam','tomato','sausage','lettuce','charsiu','cheese','choysum','mince']},
-   {id:'rack',n:'調味架',d:'油鹽醬醋',mul:1,q:1,items:['oil','water','stock','salt','sugar','soy','darksoy','oystersauce','blackbean','whitepepper','sesame','starch','vinegar','ketchup','curry','msg','honey']}],
+   {id:'market',art:'stall',n:'街市',d:'新鮮靚嘢，品質 +12%',mul:1,q:1.12,items:['porkchop','ribs','mince','charsiu','wings','drum','beef','brisket','shrimp','fishfillet','grouper','squid','clams','egg','tomato','potato','carrot','radish','broccoli','cabbage','pepper','corn','shiitake','choysum','lettuce','spinach','sprouts','youmak','onion','garlic','ginger','scallion','shallot','chili','scallion2','coriander']},
+   {id:'super',art:'super',n:'超市',d:'標價清楚，貴少少',mul:1.15,q:1,items:['spam','sausage','bacon','egg','cheese','milk','cream','coconut','noodle','spaghetti','macaroni','rawrice','toast','butter','mushroom','lemon','beer']},
+   {id:'fridge',art:'fridge',n:'雪櫃',d:'琴日剩低嘅，免費但唔多，品質打個折',mul:0,q:.85,stock:1,pool:['rice','rice','egg','spam','tomato','sausage','lettuce','charsiu','cheese','choysum','mince']},
+   {id:'rack',rack:1,n:'調味架',d:'油鹽醬醋',mul:1,q:1,items:['oil','water','stock','salt','sugar','soy','darksoy','oystersauce','blackbean','whitepepper','sesame','starch','vinegar','ketchup','curry','msg','honey']}],
   cm:{good:['阿爸：「{d}好送飯，再嚟一碗！」','細佬：「今晚唔使叫外賣喇！」','阿媽：「都幾似樣，邊個教你？」'],
       mid:['阿爸：「食得。」然後繼續睇新聞。','細佬：「你係咪落少咗嘢？」','阿媽：「下次火候再控制下。」'],
       bad:['阿媽：「得喇得喇，聽日我煮。」','細佬靜靜雞開咗個杯麵。','阿爸夾咗一啖，然後話自己唔肚餓。']}},
@@ -541,10 +577,10 @@ const SC={
   serve:'賣俾同層宿友',sell:1.3,
   note:'電磁爐開到 <b>6</b> 有機會跳掣；炸嘢或者燒嘢會引舍監。公用雪櫃嘅嘢「借用」有風險。',
   src:[
-   {id:'cvs',n:'便利店',d:'24 小時，但貴',mul:1.35,q:.9,items:['noodle','egg','spam','sausage','toast','lettuce','cheese','milk','rice','corn','dace','pb','condmilk','beer']},
-   {id:'wet',n:'樓下街市',d:'行十分鐘，抵食',mul:1,q:1.05,items:['drum','wings','mince','beef','choysum','youmak','tomato','onion','rawrice','shiitake','garlic','ginger','scallion2']},
-   {id:'share',n:'公用雪櫃',d:'唔係你嘅……免費，但可能俾人發現',mul:0,q:.8,stock:1,risky:1,pool:['egg','spam','cheese','milk','sausage','charsiu','rice','tomato']},
-   {id:'packs',n:'調味包',d:'外賣儲落嚟嘅',mul:1.2,q:1,items:['oil','water','salt','sugar','soy','oystersauce','ketchup','whitepepper','sesame','satay','curry','msg']}],
+   {id:'cvs',art:'cvs',n:'便利店',d:'24 小時，但貴',mul:1.35,q:.9,items:['noodle','egg','spam','sausage','toast','lettuce','cheese','milk','rice','corn','dace','pb','condmilk','beer']},
+   {id:'wet',art:'stall',hue:'#2f8f5b',n:'樓下街市',d:'行十分鐘，抵食',mul:1,q:1.05,items:['drum','wings','mince','beef','choysum','youmak','tomato','onion','rawrice','shiitake','garlic','ginger','scallion2']},
+   {id:'share',art:'fridge',n:'公用雪櫃',d:'唔係你嘅……免費，但可能俾人發現',mul:0,q:.8,stock:1,risky:1,pool:['egg','spam','cheese','milk','sausage','charsiu','rice','tomato']},
+   {id:'packs',rack:1,n:'調味包',d:'外賣儲落嚟嘅',mul:1.2,q:1,items:['oil','water','salt','sugar','soy','oystersauce','ketchup','whitepepper','sesame','satay','curry','msg']}],
   cm:{good:['室友：「嘩，你可以開舖喇！」','隔籬房聞到香味過嚟敲門。','宿友：「呢碟{d}值得我遲交功課。」'],
       mid:['室友：「好過食杯麵。」','宿友：「抵食嘅。」','室友邊打機邊食完。'],
       bad:['室友：「我……我飽咗。」','成層樓個煙霧警報響咗。','宿友將碟嘢擺返出走廊。']}},
@@ -553,10 +589,10 @@ const SC={
   serve:'出餐收錢',sell:2.2,
   note:'爐頭去到 <b>9</b>：鑊、炒、火候 8 以上先有鑊氣。火候 9 炒或者炸有機會起火。',
   src:[
-   {id:'frozen',n:'凍肉舖',d:'平，但係凍肉',mul:.7,q:.85,items:['beef','porkchop','ribs','wings','drum','mince','spam','sausage','charsiu','squid','shrimp','fishfillet']},
-   {id:'seafood',n:'海鮮檔',d:'游水生猛，品質 +20%',mul:1.2,q:1.2,items:['clams','crab','squid','shrimp','grouper','scallop']},
-   {id:'veg',n:'菜檔',d:'熟客價',mul:.8,q:1.05,items:['pepper','onion','sprouts','choysum','youmak','tomato','chili','garlic','ginger','scallion','scallion2','coriander','hofun','ricenoodle','rice','egg']},
-   {id:'sauce',n:'醬料架',d:'師傅私家醬料',mul:1,q:1,items:['lard','oil','water','stock','beer','salt','sugar','soy','darksoy','oystersauce','blackbean','saltpepper','starch','xo','whitepepper','sesame','msg']}],
+   {id:'frozen',art:'butcher',n:'凍肉舖',d:'平，但係凍肉',mul:.7,q:.85,items:['beef','porkchop','ribs','wings','drum','mince','spam','sausage','charsiu','squid','shrimp','fishfillet']},
+   {id:'seafood',art:'tank',n:'海鮮檔',d:'游水生猛，品質 +20%',mul:1.2,q:1.2,items:['clams','crab','squid','shrimp','grouper','scallop']},
+   {id:'veg',art:'stall',hue:'#3b8945',n:'菜檔',d:'熟客價',mul:.8,q:1.05,items:['pepper','onion','sprouts','choysum','youmak','tomato','chili','garlic','ginger','scallion','scallion2','coriander','hofun','ricenoodle','rice','egg']},
+   {id:'sauce',rack:1,n:'醬料架',d:'師傅私家醬料',mul:1,q:1,items:['lard','oil','water','stock','beer','salt','sugar','soy','darksoy','oystersauce','blackbean','saltpepper','starch','xo','whitepepper','sesame','msg']}],
   cm:{good:['熟客：「呢味有鑊氣，再嚟枝啤酒！」','隔籬枱指住你碟{d}：「同佢一樣！」','老闆娘：「呢碟{d}可以放上牆。」'],
       mid:['食客：「都 OK，冇上次咁正。」','熟客：「送酒就啱。」','食客默默食完，冇乜表情。'],
       bad:['食客：「老闆，呢碟{d}係咪整錯咗？」','伙記偷偷將碟嘢倒咗。','熟客：「今日師傅放假？」']}},
@@ -565,8 +601,8 @@ const SC={
   serve:'出餐收錢',sell:1.8,
   note:'快就係王道：煮得快過標準時間有加分，太慢客人會嬲。',
   src:[
-   {id:'supplier',n:'食材供應商',d:'批發價，貨色一般',mul:.8,q:.95,items:['spam','egg','noodle','porkchop','beef','wings','fishfillet','sausage','toast','rice','macaroni','spaghetti','cheese','butter','condmilk','pb','onion','tomato','pepper','corn','lettuce']},
-   {id:'grocery',n:'雜貨舖',d:'醬料乾貨',mul:1,q:1,items:['oil','water','stock','milk','coconut','salt','sugar','soy','darksoy','oystersauce','ketchup','worcester','satay','curry','whitepepper','starch','honey','msg','sesame','lemon']}],
+   {id:'supplier',art:'truck',n:'食材供應商',d:'批發價，貨色一般',mul:.8,q:.95,items:['spam','egg','noodle','porkchop','beef','wings','fishfillet','sausage','toast','rice','macaroni','spaghetti','cheese','butter','condmilk','pb','onion','tomato','pepper','corn','lettuce']},
+   {id:'grocery',rack:1,n:'雜貨舖',d:'醬料乾貨',mul:1,q:1,items:['oil','water','stock','milk','coconut','salt','sugar','soy','darksoy','oystersauce','ketchup','worcester','satay','curry','whitepepper','starch','honey','msg','sesame','lemon']}],
   cm:{good:['熟客：「快靚正！聽朝再嚟。」','阿叔：「呢個{d}有返以前嘅味道。」','上班族一路食一路影相。'],
       mid:['上班族：「食完返工，冇所謂啦。」','熟客：「都係咁上下。」','學生：「抵食，夠飽。」'],
       bad:['客人：「我叫嘅唔係呢樣嘢呀？」','阿姐：「你再咁煮老闆炒你魷魚。」','客人淨係飲咗杯奶茶就走。']}},
@@ -575,9 +611,9 @@ const SC={
   serve:'出餐收錢',sell:3,
   note:'每餐客人有指定熟度，扒嘅熟度要啱。',
   src:[
-   {id:'importer',n:'進口肉商',d:'冰鮮空運，品質 +25%',mul:1,q:1.25,items:['ribeye','sirloin','wagyu','lamb','bacon','sausage']},
-   {id:'farm',n:'有機農場',d:'貴，但靚',mul:1.3,q:1.2,items:['potato','asparagus','mushroom','onion','garlic','tomato','broccoli','corn','carrot','lettuce','rosemary','thyme']},
-   {id:'pantry',n:'香料房',d:'',mul:1,q:1,items:['oil','olive','butter','water','stock','redwine','cream','salt','blackpepper','dijon','honey','worcester','fries']}],
+   {id:'importer',art:'butcher',hue:'#7a2a35',n:'進口肉商',d:'冰鮮空運，品質 +25%',mul:1,q:1.25,items:['ribeye','sirloin','wagyu','lamb','bacon','sausage']},
+   {id:'farm',art:'farm',n:'有機農場',d:'貴，但靚',mul:1.3,q:1.2,items:['potato','asparagus','mushroom','onion','garlic','tomato','broccoli','corn','carrot','lettuce','rosemary','thyme']},
+   {id:'pantry',rack:1,n:'香料房',d:'',mul:1,q:1,items:['oil','olive','butter','water','stock','redwine','cream','salt','blackpepper','dijon','honey','worcester','fries']}],
   cm:{good:['客人：「熟度啱啱好，同我要求一模一樣。」','食評人喺小簿仔寫咗好多字。','客人加多杯紅酒，話要慶祝。'],
       mid:['客人：「價錢嚟講……麻麻。」','客人：「醬汁唔錯，塊扒就普通。」','客人禮貌咁笑一笑。'],
       bad:['客人要求見經理。','客人：「我講明熟度㗎！」','客人塊扒切咗一刀就放低刀叉。']}},
@@ -586,10 +622,10 @@ const SC={
   serve:'出餐收錢',sell:4,
   note:'要求高：冇主廚幫手會扣 5 分。食材貴，但賣得起價。',
   src:[
-   {id:'air',n:'法國空運',d:'今朝先落機，品質 +35%',mul:1,q:1.35,items:['foie','truffle','duck','mussels','oyster','lobster','scallop','cheese']},
-   {id:'local',n:'本地街市',d:'',mul:1.1,q:1.05,items:['brisket','bacon','egg','onion','shallot','carrot','mushroom','garlic','potato','asparagus','tomato','spinach','parsley','thyme','baguette']},
-   {id:'cellar',n:'酒窖',d:'入饌用',mul:1,q:1,items:['redwine','whitewine']},
-   {id:'pantry',n:'調味櫃',d:'',mul:1,q:1,items:['butter','olive','water','stock','cream','milk','salt','blackpepper','dijon','honey','vinegar','sugar','lemon']}],
+   {id:'air',art:'plane',n:'法國空運',d:'今朝先落機，品質 +35%',mul:1,q:1.35,items:['foie','truffle','duck','mussels','oyster','lobster','scallop','cheese']},
+   {id:'local',art:'stall',hue:'#3554a4',n:'本地街市',d:'',mul:1.1,q:1.05,items:['brisket','bacon','egg','onion','shallot','carrot','mushroom','garlic','potato','asparagus','tomato','spinach','parsley','thyme','baguette']},
+   {id:'cellar',art:'cellar',n:'酒窖',d:'入饌用',mul:1,q:1,items:['redwine','whitewine']},
+   {id:'pantry',rack:1,n:'調味櫃',d:'',mul:1,q:1,items:['butter','olive','water','stock','cream','milk','salt','blackpepper','dijon','honey','vinegar','sugar','lemon']}],
   cm:{good:['主廚：「Magnifique！」然後拍咗拍你膊頭。','食評人：「呢碟{d}有靈魂。」','客人閉埋眼慢慢咀嚼。'],
       mid:['主廚：「Bof……」聳一聳膊頭。','客人：「C\'est correct.」','食評人冇寫嘢，淨係飲咗啖水。'],
       bad:['主廚將碟嘢掟入垃圾桶，用法文講咗好長一句。','客人用餐巾抹一抹嘴，靜靜離開。','食評人：「我會喺專欄提起你。」']}},
@@ -598,10 +634,10 @@ const SC={
   serve:'同隊友分享',sell:0,
   note:'食材靠自己搵，每次出手耗 <b>2</b> 健康，唔一定成功。營火會忽大忽細，有機會落雨。',
   src:[
-   {id:'pack',n:'背囊',d:'帶上山嘅，每日補給',mul:0,q:1,stock:1,fixed:{spam:2,noodle:2,rawrice:2,sausage:1,seasalt:3,oil:1}},
-   {id:'stream',n:'溪邊',d:'打水、捉魚',mul:0,q:1.15,wild:1,chance:{water:1,streamfish:.5}},
-   {id:'forest',n:'山林',d:'採集，菇要識認',mul:0,q:1.15,wild:1,chance:{wildveg:.9,wildmush:.8,wildonion:.8,herbs:.85}},
-   {id:'trap',n:'陷阱',d:'等運到',mul:0,q:1.15,wild:1,chance:{rabbit:.35}}],
+   {id:'pack',art:'pack',n:'背囊',d:'帶上山嘅，每日補給',mul:0,q:1,stock:1,fixed:{spam:2,noodle:2,rawrice:2,sausage:1,seasalt:3,oil:1}},
+   {id:'stream',art:'stream',n:'溪邊',d:'打水、捉魚',mul:0,q:1.15,wild:1,chance:{water:1,streamfish:.5}},
+   {id:'forest',art:'forest',n:'山林',d:'採集，菇要識認',mul:0,q:1.15,wild:1,chance:{wildveg:.9,wildmush:.8,wildonion:.8,herbs:.85}},
+   {id:'trap',art:'trap',n:'陷阱',d:'等運到',mul:0,q:1.15,wild:1,chance:{rabbit:.35}}],
   cm:{good:['行山友：「喺山上食到咁嘅嘢，值回票價！」','一隻松鼠喺樹上望住你流口水。','隊友：「我哋唔落山喇，喺度開餐廳。」'],
       mid:['行山友：「肚餓就咩都好食。」','隊友：「有熱嘢食已經好好。」','隊友：「總好過能量棒。」'],
       bad:['行山友：「我諗我食返條能量棒算。」','連蚊都唔叮你。','隊友默默收拾背囊準備落山。']}}
@@ -1028,6 +1064,85 @@ function stageHTML(o){
   return o.bare?inner:`<div class="stage-wrap">${inner}</div>`;
 }
 
+/* ---- 調味架樽罐：[形狀, 內容顏色, 蓋／標籤顏色] ---- */
+const BTL={oil:['tall','#f2c94c','#c0392b'],olive:['tall','#9bab3a','#3d5a1e'],lard:['jar','#f4efe4','#c0392b'],butter:['block','#f6dc7a','#2c74b0'],
+  water:['jug','#bfe3f5','#2c74b0'],stock:['carton','#d39a52','#a0522d'],redwine:['wine','#6e1f2c','#2b1a14'],whitewine:['wine','#e6d9a0','#c9a45c'],beer:['bottle','#8a5a1c','#d4a017'],
+  milk:['carton','#ffffff','#2c74b0'],cream:['carton','#f4efe3','#c0392b'],coconut:['can','#f1ece0','#3b8945'],condmilk:['can','#f5ecd6','#2c74b0'],
+  salt:['shaker','#ffffff','#9aa0a6'],seasalt:['jar','#e8eef2','#2c74b0'],sugar:['jar','#ffffff','#e08aa0'],msg:['bag','#ffffff','#c0392b'],starch:['box','#f5f5f5','#2c74b0'],
+  blackpepper:['shaker','#2b2b2b','#5b6764'],whitepepper:['shaker','#e8e0cc','#c0392b'],saltpepper:['shaker','#cdbb9a','#c0392b'],
+  soy:['bottle','#3b2414','#c0392b'],darksoy:['bottle','#1c120b','#e2b13c'],oystersauce:['bottle','#4a2d1a','#2f7d4f'],worcester:['bottle','#2f1a12','#e67e22'],sesame:['bottle','#b5752a','#c0392b'],vinegar:['tall','#5a2a1a','#c9a45c'],
+  ketchup:['squeeze','#c0392b','#3b8945'],blackbean:['jar','#2a1d18','#c0392b'],curry:['jar','#d9a21b','#3b8945'],satay:['jar','#b5652a','#c0392b'],xo:['jar','#a8432a','#2b2b2b'],
+  honey:['jar','#e8a317','#7a5432'],dijon:['jar','#d4b23a','#2b2b2b'],pb:['jar','#b5803a','#c0392b'],lemon:['fruit','#f5d63d','#3b8945'],fries:['box','#d63a2f','#f2c94c']};
+function bottleSVG(id){
+  const g=ING[id],[sh,c,k]=BTL[id]||['bottle','#9a8a7a','#5b6764'],ch=g.ch||g.n[0];
+  const T=(y,dark)=>`<text x="20" y="${y}" text-anchor="middle" font-size="9" font-weight="700" fill="${dark?'#2b2b2b':'#fff'}" style="font-family:var(--f-disp)">${ch}</text>`;
+  const O=`stroke="rgba(0,0,0,.35)" stroke-width="1"`;let s;
+  switch(sh){
+  case'tall':s=`<rect x="16" y="1" width="8" height="5" rx="1" fill="${k}"/><rect x="17" y="5" width="6" height="9" fill="${c}" ${O}/><path d="M12 21Q12 15 17 13H23Q28 15 28 21V48Q28 51 25 51H15Q12 51 12 48Z" fill="${c}" ${O}/><rect x="12" y="29" width="16" height="12" fill="#fff"/>${T(38,1)}`;break;
+  case'wine':s=`<rect x="17.5" y="1" width="5" height="9" fill="${k}"/><rect x="17.5" y="9" width="5" height="9" fill="${c}" ${O}/><path d="M12 26Q12 19 17.5 17H22.5Q28 19 28 26V49Q28 51 26 51H14Q12 51 12 49Z" fill="${c}" ${O}/><rect x="12" y="33" width="16" height="11" fill="#f4ead2"/>${T(41.5,1)}`;break;
+  case'jar':s=`<rect x="9" y="22" width="22" height="7" rx="2" fill="${k}" ${O}/><rect x="10" y="28" width="20" height="23" rx="4" fill="${c}" ${O}/><rect x="10" y="34" width="20" height="11" fill="#fff" opacity=".92"/>${T(42.5,1)}`;break;
+  case'shaker':s=`<rect x="13" y="18" width="14" height="9" rx="3" fill="${k}" ${O}/><g fill="rgba(0,0,0,.45)"><circle cx="17" cy="21" r="1"/><circle cx="20" cy="20.5" r="1"/><circle cx="23" cy="21" r="1"/></g><rect x="13" y="26" width="14" height="25" rx="3" fill="${c}" ${O}/><rect x="13" y="33" width="14" height="11" fill="#fff" opacity=".9"/>${T(41.5,1)}`;break;
+  case'jug':s=`<path d="M29 23q7 0 7 8t-7 8" fill="none" stroke="${c}" stroke-width="3"/><rect x="16" y="8" width="8" height="5" rx="1" fill="${k}"/><path d="M10 19L15 12H25L30 19V48Q30 51 27 51H13Q10 51 10 48Z" fill="${c}" ${O}/><path d="M10 32H30" stroke="${k}" stroke-width="1.5" opacity=".5"/>${T(44,1)}`;break;
+  case'carton':s=`<path d="M15 14L20 7L25 14Z" fill="#fff" ${O}/><path d="M11 22L15 14H25L29 22V51H11Z" fill="${c}" ${O}/><rect x="11" y="30" width="18" height="13" fill="${k}"/>${T(39.5)}`;break;
+  case'can':s=`<rect x="11" y="22" width="18" height="29" rx="2" fill="${c}" ${O}/><ellipse cx="20" cy="22.5" rx="9" ry="2" fill="#c8ccd0"/><rect x="11" y="30" width="18" height="13" fill="${k}"/>${T(39.5)}`;break;
+  case'squeeze':s=`<path d="M18 4H22L23 10H17Z" fill="${k}"/><rect x="15.5" y="9" width="9" height="7" rx="1.5" fill="${k}"/><path d="M12 19Q20 14 28 19V48Q28 51 25 51H15Q12 51 12 48Z" fill="${c}" ${O}/><rect x="12" y="29" width="16" height="11" fill="#fff"/>${T(37.5,1)}`;break;
+  case'bag':s=`<path d="M10 20L12 51H28L30 20L27 15H13Z" fill="${c}" ${O}/><path d="M13 15H27" stroke="rgba(0,0,0,.3)" stroke-dasharray="2 1.5"/><rect x="11.5" y="29" width="17" height="12" fill="${k}"/>${T(38)}`;break;
+  case'box':s=`<rect x="10" y="16" width="20" height="35" rx="1" fill="${c}" ${O}/><rect x="10" y="27" width="20" height="13" fill="${k}"/>${T(36.5,k==='#f2c94c')}`;break;
+  case'block':s=`<rect x="7" y="34" width="26" height="17" rx="2" fill="${c}" ${O}/><rect x="7" y="38" width="26" height="9" fill="${k}"/>${T(45.5)}`;break;
+  case'fruit':s=`<path d="M20 30q4 -6 9 -4q-3 5 -9 4Z" fill="${k}"/><ellipse cx="20" cy="41" rx="12" ry="10" fill="${c}" ${O}/><ellipse cx="16" cy="37" rx="3" ry="2" fill="#fff" opacity=".55"/>`;break;
+  default:s=`<rect x="16.5" y="6" width="7" height="5" rx="1" fill="${k}"/><rect x="17.5" y="10" width="5" height="6" fill="${c}" ${O}/><path d="M11 24Q11 17 17.5 15H22.5Q29 17 29 24V48Q29 51 26 51H14Q11 51 11 48Z" fill="${c}" ${O}/><rect x="11" y="30" width="18" height="12" fill="#fff"/>${T(39,1)}`;
+  }
+  return`<svg viewBox="0 0 40 52" aria-hidden="true"><ellipse cx="20" cy="51" rx="12" ry="1.6" fill="rgba(0,0,0,.18)"/>${s}<path d="M14 24v18" stroke="#fff" stroke-width="1.6" opacity=".35" stroke-linecap="round"/></svg>`;
+}
+const POWDER=new Set(['shaker','bag','box','jar']);
+
+/* ---- 食材來源畫：小店面 ---- */
+const SHUE={stall:'#c0392b',super:'#2c74b0',cvs:'#e67e22',butcher:'#bf453b',tank:'#2c74b0',truck:'#7a5432',farm:'#3b8945',plane:'#3554a4',cellar:'#6e1f2c'};
+function shopSVG(src){
+  const a=src.art,hu=src.hue||SHUE[a]||'#8a8f93';let s='';
+  const stripes=(y,h,c2)=>{let o='';for(let i=0;i<8;i++)o+=`<rect x="${4+i*14}" y="${y}" width="14" height="${h}" fill="${i%2?c2:hu}"/><circle cx="${11+i*14}" cy="${y+h}" r="7" fill="${i%2?c2:hu}"/>`;return o};
+  const sign=(y)=>`<rect x="6" y="${y}" width="108" height="15" rx="2" fill="${hu}"/><text x="60" y="${y+11.5}" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" style="font-family:var(--f-disp)">${src.n}</text>`;
+  switch(a){
+  case'stall':s=`<rect x="10" y="16" width="4" height="52" fill="#7a5432"/><rect x="106" y="16" width="4" height="52" fill="#7a5432"/>${stripes(4,14,'#fff')}<rect x="6" y="50" width="108" height="20" rx="2" fill="#a8743f"/><rect x="6" y="50" width="108" height="4" fill="#c99a63"/>
+    <g><rect x="14" y="40" width="26" height="12" fill="#c99a63"/><circle cx="20" cy="39" r="4.5" fill="#d64535"/><circle cx="28" cy="38" r="4.5" fill="#e04a3a"/><circle cx="35" cy="39" r="4.5" fill="#c0392b"/>
+    <rect x="47" y="40" width="26" height="12" fill="#c99a63"/><ellipse cx="54" cy="38" rx="6" ry="4" fill="#3b8945"/><ellipse cx="66" cy="38" rx="6" ry="4" fill="#4fa05a"/>
+    <rect x="80" y="40" width="26" height="12" fill="#c99a63"/><circle cx="86" cy="39" r="4" fill="#e67e22"/><circle cx="93" cy="38" r="4" fill="#f39c12"/><circle cx="100" cy="39" r="4" fill="#e67e22"/></g>`;break;
+  case'super':s=`<rect x="6" y="14" width="108" height="56" fill="#e9eef2"/>${sign(4)}<rect x="12" y="28" width="26" height="28" fill="#cfe6f2" stroke="#9fb4be"/><path d="M12 38H38M12 47H38" stroke="#9fb4be"/><g fill="#e67e22"><rect x="15" y="33" width="4" height="5"/><rect x="21" y="33" width="4" height="5"/></g><g fill="#3b8945"><rect x="27" y="42" width="4" height="5"/><rect x="33" y="42" width="4" height="5"/></g>
+    <rect x="44" y="30" width="34" height="40" fill="#bfe3f5" stroke="#8aa"/><path d="M61 30V70" stroke="#8aa"/>
+    <g stroke="#5b6764" stroke-width="2" fill="none"><path d="M86 48h4l4 12h14l3 -9H92"/></g><circle cx="96" cy="64" r="2.5" fill="#5b6764"/><circle cx="106" cy="64" r="2.5" fill="#5b6764"/>`;break;
+  case'cvs':s=`<rect x="6" y="14" width="108" height="56" fill="#f4f1ea"/>${sign(4)}<rect x="6" y="19" width="108" height="3" fill="#2f8f5b"/><rect x="6" y="22" width="108" height="3" fill="#e67e22"/>
+    <rect x="12" y="30" width="44" height="30" fill="#fff6c8" stroke="#c9b97a"/><path d="M12 40H56M12 50H56" stroke="#e0cf8a"/><g fill="#c0392b"><rect x="16" y="34" width="5" height="6"/><rect x="24" y="44" width="5" height="6"/></g><g fill="#2c74b0"><rect x="34" y="34" width="5" height="6"/><rect x="44" y="44" width="5" height="6"/></g>
+    <rect x="66" y="30" width="36" height="40" fill="#bfe3f5" stroke="#8aa"/><text x="84" y="47" text-anchor="middle" font-size="8" fill="#2f8f5b" style="font-family:var(--f-num)">24h</text>`;break;
+  case'fridge':s=`<rect x="36" y="2" width="48" height="68" rx="7" fill="#f2f4f5" stroke="#9aa0a6" stroke-width="2"/><path d="M36 24H84" stroke="#9aa0a6" stroke-width="2"/><rect x="76" y="8" width="3" height="12" rx="1.5" fill="#9aa0a6"/><rect x="76" y="29" width="3" height="20" rx="1.5" fill="#9aa0a6"/>
+    <circle cx="46" cy="34" r="3" fill="#e04a3a"/><rect x="50" y="40" width="10" height="8" fill="#f6e27a" transform="rotate(-6 55 44)"/><rect x="42" y="66" width="6" height="4" fill="#9aa0a6"/><rect x="72" y="66" width="6" height="4" fill="#9aa0a6"/>`;break;
+  case'butcher':s=`<rect x="6" y="14" width="108" height="56" fill="#f3e9df"/>${stripes(4,12,'#fff')}<path d="M14 26H106" stroke="#5b6764" stroke-width="2"/>
+    <g fill="#bf453b" stroke="#8c2e26"><path d="M28 28v4"/><ellipse cx="28" cy="40" rx="6" ry="9"/><path d="M52 28v4"/><ellipse cx="52" cy="38" rx="5" ry="7"/><path d="M76 28v4"/><ellipse cx="76" cy="41" rx="7" ry="10"/><path d="M98 28v4"/><ellipse cx="98" cy="38" rx="5" ry="7"/></g>
+    <rect x="6" y="54" width="108" height="16" fill="#cfe6f2" stroke="#9fb4be"/><g fill="#e8a49a"><rect x="14" y="60" width="16" height="6" rx="2"/><rect x="40" y="60" width="16" height="6" rx="2"/><rect x="66" y="60" width="16" height="6" rx="2"/><rect x="92" y="60" width="14" height="6" rx="2"/></g>`;break;
+  case'tank':s=`<rect x="8" y="10" width="104" height="54" rx="3" fill="#7cc4e4" stroke="#3a7d9a" stroke-width="2"/><rect x="8" y="10" width="104" height="8" fill="#5aaed2"/><path d="M8 56Q30 50 60 56T112 54V64H8Z" fill="#e2cf9a"/>
+    <g fill="#e67e22"><path d="M30 34q8 -7 16 0q-8 7 -16 0Z"/><path d="M46 34l6 -5v10Z"/></g><g fill="#c0392b"><path d="M70 44q7 -6 14 0q-7 6 -14 0Z"/><path d="M84 44l5 -4v8Z"/></g>
+    <path d="M94 54q-4 -8 2 -10q6 2 2 10" fill="#3b8945"/><g fill="#fff" opacity=".8"><circle cx="24" cy="28" r="2"/><circle cx="27" cy="22" r="1.5"/><circle cx="62" cy="30" r="1.8"/></g><rect x="20" y="64" width="80" height="6" fill="#5b6764"/>`;break;
+  case'truck':s=`<rect x="8" y="22" width="66" height="36" rx="2" fill="#f4f1ea" stroke="#9aa0a6"/><path d="M74 32H96L108 44V58H74Z" fill="${hu}"/><path d="M78 36H94L102 44H78Z" fill="#bfe3f5"/>
+    <g fill="#c99a63" stroke="#8a6338"><rect x="14" y="40" width="16" height="14"/><rect x="32" y="40" width="16" height="14"/><rect x="23" y="27" width="16" height="13"/><rect x="50" y="40" width="16" height="14"/></g>
+    <circle cx="26" cy="60" r="7" fill="#2b2f31"/><circle cx="26" cy="60" r="3" fill="#9aa0a6"/><circle cx="92" cy="60" r="7" fill="#2b2f31"/><circle cx="92" cy="60" r="3" fill="#9aa0a6"/>`;break;
+  case'farm':s=`<rect x="0" y="0" width="120" height="72" fill="#cfe9f5"/><circle cx="102" cy="14" r="7" fill="#f6c84c"/><path d="M0 46Q60 36 120 46V72H0Z" fill="#6aa84f"/><g stroke="#4f8a3a" stroke-width="2"><path d="M8 56l20 -6M8 64l30 -8M70 52l40 4M64 62l50 4"/></g>
+    <path d="M30 48V28L46 16L62 28V48Z" fill="#b53a2c"/><path d="M28 29L46 15L64 29" stroke="#fff" stroke-width="2.5" fill="none"/><rect x="40" y="34" width="12" height="14" fill="#fff"/><path d="M40 34l12 14M52 34L40 48" stroke="#b53a2c" stroke-width="1.5"/>`;break;
+  case'plane':s=`<rect x="0" y="0" width="120" height="72" fill="#cfe2f5"/><g fill="#fff"><ellipse cx="26" cy="54" rx="18" ry="7"/><ellipse cx="38" cy="50" rx="12" ry="7"/><ellipse cx="94" cy="20" rx="14" ry="5"/></g>
+    <g transform="rotate(-12 60 36)"><path d="M24 36Q24 31 34 31H90Q100 33 100 36Q100 39 90 41H34Q24 41 24 36Z" fill="#fff" stroke="#8aa"/><path d="M52 36L66 14H72L64 36Z" fill="${hu}"/><path d="M52 38L66 58H72L64 38Z" fill="${hu}"/><path d="M30 33L26 22H32L40 32Z" fill="${hu}"/><g fill="#5aaed2"><circle cx="78" cy="35" r="1.5"/><circle cx="84" cy="35" r="1.5"/><circle cx="72" cy="35" r="1.5"/></g></g>`;break;
+  case'cellar':s=`<rect x="0" y="0" width="120" height="72" fill="#3a2a22"/><path d="M14 72V30Q60 -6 106 30V72Z" fill="#4e382c"/><g stroke="#2a1d18" stroke-width="1"><path d="M14 40H106M14 52H106"/></g>
+    <g fill="#8a5a33" stroke="#5e3a1d"><ellipse cx="34" cy="62" rx="14" ry="9"/><ellipse cx="62" cy="62" rx="14" ry="9"/></g><g stroke="#3a2617" stroke-width="1.5" fill="none"><path d="M26 54v16M42 54v16M54 54v16M70 54v16"/></g>
+    <g fill="#6e1f2c"><circle cx="84" cy="46" r="3.5"/><circle cx="92" cy="46" r="3.5"/><circle cx="100" cy="46" r="3.5"/><circle cx="88" cy="58" r="3.5"/><circle cx="96" cy="58" r="3.5"/></g><g fill="#e6d9a0"><circle cx="84" cy="58" r="3.5"/><circle cx="100" cy="58" r="3.5"/></g>`;break;
+  case'pack':s=`<path d="M42 20Q42 8 60 8Q78 8 78 20" fill="none" stroke="#4a5a2a" stroke-width="4"/><rect x="36" y="18" width="48" height="50" rx="12" fill="#6d7f26"/><rect x="42" y="42" width="36" height="20" rx="6" fill="#55651c"/><path d="M36 30Q60 38 84 30" stroke="#4a5a2a" stroke-width="3" fill="none"/><rect x="56" y="46" width="8" height="4" rx="1" fill="#c9a45c"/>`;break;
+  case'stream':s=`<rect x="0" y="0" width="120" height="72" fill="#7fae5a"/><path d="M0 30Q30 22 60 34T120 30V54Q90 48 60 56T0 52Z" fill="#5aaed2"/><g stroke="#cfe9f5" stroke-width="1.5" fill="none" opacity=".8"><path d="M14 40q6 -3 12 0M54 44q6 -3 12 0M90 40q6 -3 12 0"/></g>
+    <g fill="#9aa0a6"><ellipse cx="20" cy="62" rx="9" ry="5"/><ellipse cx="96" cy="22" rx="10" ry="5"/></g><path d="M64 46q6 -5 12 0q-6 5 -12 0Z M76 46l5 -4v8Z" fill="#c9a45c"/>`;break;
+  case'forest':s=`<rect x="0" y="0" width="120" height="72" fill="#b7d9a8"/>${'0,24,50,78,102'.split(',').map((x,i)=>`<path d="M${+x+2} 64L${+x+12} ${18+(i%2)*8}L${+x+22} 64Z" fill="${i%2?'#2f5d36':'#1f4a2a'}"/>`).join('')}<rect x="0" y="62" width="120" height="10" fill="#6a8a3a"/>
+    <rect x="57" y="56" width="6" height="8" fill="#f4ead2"/><path d="M50 57Q60 44 70 57Z" fill="#c0392b"/><g fill="#fff"><circle cx="56" cy="52" r="1.3"/><circle cx="63" cy="51" r="1.3"/></g>`;break;
+  case'trap':s=`<rect x="0" y="0" width="120" height="72" fill="#cfe2b8"/><rect x="0" y="58" width="120" height="14" fill="#8a6a3a"/><g transform="rotate(-18 40 58)"><rect x="22" y="30" width="44" height="28" fill="none" stroke="#7a5432" stroke-width="3"/><path d="M22 40H66M22 49H66M33 30V58M44 30V58M55 30V58" stroke="#7a5432" stroke-width="1.5"/></g>
+    <path d="M66 58L62 34" stroke="#5e3a1d" stroke-width="2.5"/><path d="M80 58L96 52" stroke="#e67e22" stroke-width="5" stroke-linecap="round"/><path d="M96 52l5 -4M96 52l6 0" stroke="#3b8945" stroke-width="2"/>`;break;
+  default:s=sign(4);
+  }
+  return`<svg viewBox="0 0 120 72" aria-hidden="true">${s}</svg>`;
+}
+
 /* ================= 介面 ================= */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1087,8 +1202,9 @@ function renderSetup(){
 }
 function renderPantry(){
   const sk=S.scene,sc=SC[sk];
-  let sid=S.src[sk];if(!sc.src.find(s=>s.id===sid))sid=S.src[sk]=sc.src[0].id;
-  const src=sc.src.find(s=>s.id===sid);
+  const shops=sc.src.filter(s=>!s.rack);
+  let sid=S.src[sk];if(!shops.find(s=>s.id===sid))sid=S.src[sk]=shops[0].id;
+  const src=shops.find(s=>s.id===sid);
   let list;
   if(src.stock){const st=S.stock[sk+'.'+src.id]||{};list=Object.keys(st).map(id=>({id,stock:st[id]}));}
   else if(src.wild)list=Object.keys(src.chance).map(id=>({id,chance:src.chance[id]}));
@@ -1097,10 +1213,13 @@ function renderPantry(){
     if(src.stock)pr=`剩 ${o.stock}`;else if(src.wild)pr=o.chance>=1?'免費':`成功率 ${Math.round(clamp(o.chance+(sel().helper==='coach'?(sel().boost?.5:.2):0),0,1)*100)}%`;
     else pr=g.p?'$'+Math.max(1,Math.round(g.p*src.mul)):'免費';
     return`<button class="item" data-act="add" data-v="${o.id}" ${src.stock&&!o.stock?'disabled':''}>${stamp(g)}<span class="t"><span class="nm">${g.n}</span><span class="pr">${pr}</span></span></button>`}).join('');
+  const items=`<div class="items">${html||'<div class="empty">今日冇貨喇</div>'}</div>`;
+  const body=src.art==='fridge'?`<div class="fridge"><div class="fz"></div><div class="fr-in">${items}</div></div>`
+    :src.wild||src.art==='pack'?items:`<div class="store" style="--hue:${src.hue||SHUE[src.art]||'#8a8f93'}"><div class="awn"></div><div class="sb">${items}</div></div>`;
   $('#pantry').innerHTML=`<h2>食材 <small>撳一下落鑊</small></h2>
-  <div class="src-tabs">${sc.src.map(s=>`<button class="src-tab" data-act="src" data-v="${s.id}" aria-pressed="${s.id===sid}">${s.n}</button>`).join('')}</div>
+  <div class="src-tabs">${shops.map(s=>`<button class="src-tab" data-act="src" data-v="${s.id}" aria-pressed="${s.id===sid}">${shopSVG(s)}<span>${s.n}</span></button>`).join('')}</div>
   <p class="src-desc">${src.d||'&nbsp;'}</p>
-  <div class="items">${html||'<div class="empty">今日冇貨喇</div>'}</div>
+  ${body}
   <div class="legend">${Object.keys(CATN).map(c=>`<span><i class="c-${c}"></i>${CATN[c]}</span>`).join('')}</div>`;
 }
 function renderCtl(){
@@ -1115,12 +1234,28 @@ function renderCtl(){
   <div class="st-time"><label class="lab" for="time">時間 <b id="timeV">${raw?'—':fmtT(se.time)}</b></label>
     <input type="range" id="time" min="${m.t[0]}" max="${m.t[1]||1}" step="${step}" value="${se.time}" ${raw?'disabled':''}></div>`;
 }
+function renderRack(){
+  const src=SC[S.scene].src.find(s=>s.rack),el=$('#rack');if(!el)return;
+  if(!src){el.innerHTML='';return}
+  const cnt={};S.pot.forEach(p=>{if(p.src===src.id)cnt[p.id]=(cnt[p.id]||0)+1});
+  el.innerHTML=`<div class="rack"><div class="rack-h"><b>${src.n}</b><small>撳樽落調味</small></div><div class="shelf">${src.items.map(id=>{const g=ING[id],pr=g.p?'$'+Math.max(1,Math.round(g.p*src.mul)):'免費';
+    return`<button class="btl" data-act="add" data-v="${id}" data-src="${src.id}" title="${g.n} ${pr}" aria-label="${g.n}，${pr}${cnt[id]?'，已落 '+cnt[id]+' 次':''}">${bottleSVG(id)}<span class="tag">${g.n}</span>${cnt[id]?`<i class="n">${cnt[id]}</i>`:''}</button>`}).join('')}</div></div>`;
+}
+function pourFX(id){
+  const b=document.querySelector(`.btl[data-v="${id}"]`),w=$('.stage-wrap.ctl');if(!b||!w)return;
+  b.classList.add('pour');
+  const [sh,c]=BTL[id]||['bottle','#9a8a7a'],pw=POWDER.has(sh),fx=document.createElement('div');
+  fx.className='pourfx'+(pw?' powder':'');fx.style.setProperty('--pc',c);
+  fx.innerHTML=Array.from({length:pw?12:6},(_,i)=>`<i style="left:${pw?((i*37)%13-6)*2:((i%3)-1)*2}px;animation-delay:${(i*.07).toFixed(2)}s"></i>`).join('');
+  w.appendChild(fx);setTimeout(()=>fx.remove(),1500);
+}
 function renderPot(partial){
   const se=sel(),res=evaluate(false);PREV=res;
   if(!partial||!$('#stageCtl')){
-    $('#pot').innerHTML=`<div id="potHead"></div><div class="stage-wrap ctl"><div class="stage-art" id="stageArt"></div><div id="stageCtl"></div></div><div id="potBody"></div>`;
+    $('#pot').innerHTML=`<div id="potHead"></div><div class="stage-wrap ctl"><div class="stage-art" id="stageArt"></div><div id="stageCtl"></div></div><div id="rack"></div><div id="potBody"></div>`;
     renderCtl();
   }
+  renderRack();
   $('#potHead').innerHTML=`<h2>${WARE[se.ware].n} <small>${METH[se.method].n}${se.method!=='raw'?' · 火候 '+res.heat+' · '+fmtT(se.time):''}</small></h2>`;
   $('#stageArt').innerHTML=stageHTML({ware:se.ware,method:se.method,heat:res.heat,items:S.pot.map((p,i)=>Object.assign({},p,{d:res.items[i]&&res.items[i].d})),pfx:'p',bare:1});
   const rows=S.pot.map((p,i)=>{const g=ING[p.id],it=res.items[i];const d=it&&it.d;
@@ -1149,9 +1284,9 @@ function renderAll(){
 }
 
 /* ================= 動作 ================= */
-function addItem(id){
+function addItem(id,sid){
   if(S.pot.length>=14){toast('個鑊滿晒喇');return}
-  const sk=S.scene,src=SC[sk].src.find(s=>s.id===S.src[sk]);const g=ING[id];
+  const sk=S.scene,src=SC[sk].src.find(s=>s.id===(sid||S.src[sk]));const g=ING[id];
   const item={id,src:src.id,srcn:src.n,price:g.p?Math.max(1,Math.round(g.p*src.mul)):0,q:src.q};
   if(src.stock){const st=S.stock[sk+'.'+src.id];if(!st[id])return;st[id]--;item.lim=1;}
   if(src.wild){
@@ -1167,6 +1302,7 @@ function addItem(id){
     }
   }
   S.pot.push(item);save();renderSetup();renderPantry();renderPot();renderStats();
+  if(src.rack)pourFX(id);
 }
 function removeItem(i){
   const p=S.pot[i];if(!p)return;
@@ -1346,7 +1482,7 @@ function init(){
     switch(a){
       case'scene':switchScene(v);break;
       case'src':S.src[S.scene]=v;save();renderPantry();break;
-      case'add':addItem(v);break;
+      case'add':addItem(v,b.dataset.src);break;
       case'rm':removeItem(+v);break;
       case'method':setMethod(v);save();renderPot();break;
       case'shop':showShop();break;
